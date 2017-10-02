@@ -13,13 +13,13 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #endif
 #define INFINITEVOXELWORLD_IVW_PlayerController_generated_h
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_RPC_WRAPPERS \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_RPC_WRAPPERS \
  \
 	DECLARE_FUNCTION(execRemoveChunk) \
 	{ \
 		P_FINISH; \
 		P_NATIVE_BEGIN; \
-		*(bool*)Z_Param__Result=this->RemoveChunk(); \
+		this->RemoveChunk(); \
 		P_NATIVE_END; \
 	} \
  \
@@ -48,13 +48,13 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 	}
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_RPC_WRAPPERS_NO_PURE_DECLS \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_RPC_WRAPPERS_NO_PURE_DECLS \
  \
 	DECLARE_FUNCTION(execRemoveChunk) \
 	{ \
 		P_FINISH; \
 		P_NATIVE_BEGIN; \
-		*(bool*)Z_Param__Result=this->RemoveChunk(); \
+		this->RemoveChunk(); \
 		P_NATIVE_END; \
 	} \
  \
@@ -83,7 +83,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 	}
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_INCLASS_NO_PURE_DECLS \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesAIVW_PlayerController(); \
 	friend INFINITEVOXELWORLD_API class UClass* Z_Construct_UClass_AIVW_PlayerController(); \
@@ -93,7 +93,7 @@ public: \
 	enum {IsIntrinsic=COMPILED_IN_INTRINSIC};
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_INCLASS \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_INCLASS \
 private: \
 	static void StaticRegisterNativesAIVW_PlayerController(); \
 	friend INFINITEVOXELWORLD_API class UClass* Z_Construct_UClass_AIVW_PlayerController(); \
@@ -103,7 +103,7 @@ public: \
 	enum {IsIntrinsic=COMPILED_IN_INTRINSIC};
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_STANDARD_CONSTRUCTORS \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_STANDARD_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API AIVW_PlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
 	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(AIVW_PlayerController) \
@@ -116,7 +116,7 @@ private: \
 public:
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_ENHANCED_CONSTRUCTORS \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_ENHANCED_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API AIVW_PlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()) : Super(ObjectInitializer) { }; \
 private: \
@@ -129,26 +129,26 @@ DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(AIVW_PlayerController); \
 	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(AIVW_PlayerController)
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_PRIVATE_PROPERTY_OFFSET
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_10_PROLOG
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_GENERATED_BODY_LEGACY \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_PRIVATE_PROPERTY_OFFSET
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_11_PROLOG
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_GENERATED_BODY_LEGACY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_PRIVATE_PROPERTY_OFFSET \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_RPC_WRAPPERS \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_INCLASS \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_STANDARD_CONSTRUCTORS \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_PRIVATE_PROPERTY_OFFSET \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_RPC_WRAPPERS \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_INCLASS \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_STANDARD_CONSTRUCTORS \
 public: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_GENERATED_BODY \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_PRIVATE_PROPERTY_OFFSET \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_RPC_WRAPPERS_NO_PURE_DECLS \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_INCLASS_NO_PURE_DECLS \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_13_ENHANCED_CONSTRUCTORS \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_PRIVATE_PROPERTY_OFFSET \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_RPC_WRAPPERS_NO_PURE_DECLS \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_INCLASS_NO_PURE_DECLS \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_IVW_PlayerController_h_14_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 

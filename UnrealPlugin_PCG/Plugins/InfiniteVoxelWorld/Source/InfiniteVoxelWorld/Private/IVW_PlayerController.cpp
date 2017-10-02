@@ -59,7 +59,7 @@ void AIVW_PlayerController::AddChunk()
 					ChunkCoordinates.Add(chunkCoord);
 					FActorSpawnParameters SpawnInfo;
 					auto actor = GetWorld()->SpawnActor<AVoxelTerrainActor>(AVoxelTerrainActor::StaticClass(), spawnPosition, FRotator::ZeroRotator);
-				
+					Chunks.Add(actor);
 				}
 			}
 		}
@@ -67,9 +67,21 @@ void AIVW_PlayerController::AddChunk()
 	
 }
 
-bool AIVW_PlayerController::RemoveChunk()
+void AIVW_PlayerController::RemoveChunk()
 {
-	return false;
+	for(int32 i =0 ;i < ChunkCoordinates.Num();++i)
+	{
+		float xRange = (ChunkCoordinates[i].X * ChunkSize) + ChunkSizeHalf;
+		float yRange = (ChunkCoordinates[i].Y * ChunkSize) + ChunkSizeHalf;
+
+		if(!CheckRadius(xRange,yRange))
+		{
+			Chunks[i]->Destroy();
+			Chunks.RemoveAt(i);
+			
+			ChunkCoordinates.RemoveAt(i);
+		}
+	}
 }
 
 bool AIVW_PlayerController::CheckRadius(float x , float y) const

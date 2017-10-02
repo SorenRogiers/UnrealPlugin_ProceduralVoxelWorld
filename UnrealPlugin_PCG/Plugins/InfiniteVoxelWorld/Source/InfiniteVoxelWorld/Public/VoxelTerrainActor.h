@@ -37,60 +37,59 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform & transform) override;
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UMaterialInterface *> m_MaterialsArray;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
-		int32 m_RandomSeed = 0;
+	int32 m_RandomSeed = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
-		int32 m_VoxelSize = 200;
+	int32 m_VoxelSize = 200;
 
 	UPROPERTY()
-		int32 m_VoxelSizeHalf = 0;
+	int32 m_VoxelSizeHalf = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
-		int32 m_ChunkLineElements = 10;
+	int32 m_ChunkLineElements = 10;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
-		int32 m_ChunkXIndex = 0;
+	int32 m_ChunkXIndex = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
-		int32 m_ChunkYIndex = 0;
+	int32 m_ChunkYIndex = 0;
 
 	UPROPERTY()
-		int32 m_TotalChunkElements = 0;
+	int32 m_TotalChunkElements = 0;
 
 	UPROPERTY()
-		int32 m_ChunkZElements = 80;
+	int32 m_ChunkZElements = 80;
 
 	UPROPERTY()
-		int32 m_ChunkLineElementsP2 = 0;
+	int32 m_ChunkLineElementsP2 = 0;
 
 	UPROPERTY()
-		TArray<int32> m_ChunkFields; //type IDs 0 = grass 1 = dirt etc
+	TArray<int32> m_ChunkFields; //type IDs 0 = grass 1 = dirt etc
 
 	UPROPERTY()
 	UProceduralMeshComponent* m_ProceduralMeshComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float XMultiply = 1;
+	float XMultiply = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float YMultiply = 1;
+	float YMultiply = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float ZMultiply = 1;
+	float ZMultiply = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float Weight = 1;
+	float Weight = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float frequency = 1;
+	float frequency = 1;
 
 	UFUNCTION(BlueprintNativeEvent)
-		TArray<int32> CalculateNoise();
+	TArray<int32> CalculateNoise();
 
 	virtual TArray<int32> CalculateNoise_Implementation();
 	

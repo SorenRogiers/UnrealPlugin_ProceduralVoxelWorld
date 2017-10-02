@@ -232,7 +232,7 @@ void AVoxelTerrainActor::UpdateMesh()
 	}
 
 	m_ProceduralMeshComponent->ClearAllMeshSections();
-	m_ProceduralMeshComponent->CreateMeshSection(0, vertices, triangles, normals, uvs, vertexColors, tangents, false);
+	m_ProceduralMeshComponent->CreateMeshSection(0, vertices, triangles, normals, uvs, vertexColors, tangents, true);
 }
 
 

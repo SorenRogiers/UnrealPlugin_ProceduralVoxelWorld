@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
+#include "VoxelTerrainActor.h"
 #include "IVW_PlayerController.generated.h"
 
 UCLASS()
@@ -23,7 +24,7 @@ public:
 	void AddChunk();
 
 	UFUNCTION(BlueprintCallable)
-	bool RemoveChunk();
+	void RemoveChunk();
 
 	bool CheckRadius(float x, float y) const;
 public:
@@ -35,6 +36,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 VoxelSize = 0;
+
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 ChunkSize = 0;
@@ -57,6 +60,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FVector2D> ChunkCoordinates = {};
 
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<AVoxelTerrainActor> Chunks = {};*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AVoxelTerrainActor*> Chunks;
 };
