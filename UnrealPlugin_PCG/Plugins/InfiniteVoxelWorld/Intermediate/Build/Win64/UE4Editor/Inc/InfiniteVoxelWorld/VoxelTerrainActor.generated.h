@@ -13,37 +13,8 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #endif
 #define INFINITEVOXELWORLD_VoxelTerrainActor_generated_h
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_RPC_WRAPPERS \
-	virtual TArray<int32> CalculateNoise_Implementation(); \
- \
-	DECLARE_FUNCTION(execCalculateNoise) \
-	{ \
-		P_FINISH; \
-		P_NATIVE_BEGIN; \
-		*(TArray<int32>*)Z_Param__Result=this->CalculateNoise_Implementation(); \
-		P_NATIVE_END; \
-	}
-
-
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_RPC_WRAPPERS_NO_PURE_DECLS \
- \
-	DECLARE_FUNCTION(execCalculateNoise) \
-	{ \
-		P_FINISH; \
-		P_NATIVE_BEGIN; \
-		*(TArray<int32>*)Z_Param__Result=this->CalculateNoise_Implementation(); \
-		P_NATIVE_END; \
-	}
-
-
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_EVENT_PARMS \
-	struct VoxelTerrainActor_eventCalculateNoise_Parms \
-	{ \
-		TArray<int32> ReturnValue; \
-	};
-
-
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_CALLBACK_WRAPPERS
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_RPC_WRAPPERS
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_RPC_WRAPPERS_NO_PURE_DECLS
 #define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesAVoxelTerrainActor(); \
@@ -89,16 +60,12 @@ DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(AVoxelTerrainActor); \
 
 
 #define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_PRIVATE_PROPERTY_OFFSET
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_22_PROLOG \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_EVENT_PARMS
-
-
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_22_PROLOG
 #define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_GENERATED_BODY_LEGACY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
 	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_PRIVATE_PROPERTY_OFFSET \
 	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_RPC_WRAPPERS \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_CALLBACK_WRAPPERS \
 	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_INCLASS \
 	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_STANDARD_CONSTRUCTORS \
 public: \
@@ -110,7 +77,6 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
 	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_PRIVATE_PROPERTY_OFFSET \
 	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_RPC_WRAPPERS_NO_PURE_DECLS \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_CALLBACK_WRAPPERS \
 	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_INCLASS_NO_PURE_DECLS \
 	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_25_ENHANCED_CONSTRUCTORS \
 private: \

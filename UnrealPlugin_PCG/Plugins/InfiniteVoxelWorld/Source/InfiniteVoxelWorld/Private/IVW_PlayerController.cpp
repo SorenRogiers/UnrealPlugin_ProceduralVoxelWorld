@@ -4,6 +4,7 @@
 #include "VoxelTerrainActor.h"
 #include "Engine/World.h"
 #include <algorithm>
+#include "Kismet/GameplayStatics.h"
 
 void AIVW_PlayerController::Initialize()
 {
@@ -57,8 +58,18 @@ void AIVW_PlayerController::AddChunk()
 				if (foundCoord == nullptr)
 				{
 					ChunkCoordinates.Add(chunkCoord);
+
+					//Better to use BeginDeferredActorSpawnFromClass, that way the construction is ran after you initialize it.
 					FActorSpawnParameters SpawnInfo;
-					auto actor = GetWorld()->SpawnActor<AVoxelTerrainActor>(AVoxelTerrainActor::StaticClass(), spawnPosition, FRotator::ZeroRotator);
+					FTransform spawnTransform(FRotator::ZeroRotator, spawnPosition);
+					AVoxelTerrainActor* actor = GetWorld()->SpawnActorDeferred<AVoxelTerrainActor>(AVoxelTerrainActor::StaticClass(), spawnTransform);
+					if (actor != nullptr)
+					{
+						actor->ChunkXIndex = xChunkIndex;
+						actor->ChunkYIndex = yChunkIndex;
+
+						UGameplayStatics::FinishSpawningActor(actor, spawnTransform);
+					}
 					Chunks.Add(actor);
 				}
 			}

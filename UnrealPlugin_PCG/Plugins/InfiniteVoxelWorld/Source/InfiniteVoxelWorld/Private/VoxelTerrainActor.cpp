@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "VoxelTerrainActor.h"
-#include "ProceduralMeshComponent.h"
+#include "SimplexNoiseLibrary.h"
 
 const int32 Triangles[] = { 2,1,0,0,3,2 };
 const FVector2D UVs[] = { FVector2D(0.0f,0.0f),FVector2D(0.0f,1.f),FVector2D(1.f,1.f),FVector2D(1.f,0.f) };
@@ -11,7 +11,10 @@ const FVector Normals2[] = { FVector(0, 1, 0),FVector(0, 1, 0),FVector(0, 1, 0),
 const FVector Normals3[] = { FVector(0, -1, 0),FVector(0, -1, 0),FVector(0, -1, 0),FVector(0, -1, 0) };
 const FVector Normals4[] = { FVector(1, 0, 0),FVector(1, 0, 0),FVector(1, 0, 0),FVector(1, 0, 0) };
 const FVector Normals5[] = { FVector(-1, 0, 0),FVector(-1, 0, 0),FVector(-1, 0, 0),FVector(-1, 0, 0) };
-const FVector Mask[] = { FVector(0.f,0.f,1.f),FVector(0.f,0.f,-1.f), FVector(0.f,1.f,0.f),FVector(0.f,-1.f,0.f),FVector(1.f,0.f,0.f),FVector(-1.f,0.f,0.f)};
+
+//Top face - Bottom face - Front face - Back face - Left face - Right face
+//If there is no nearby voxel we add a face if there is a voxel close to us we dont need to draw a face
+const FVector mask[] = { FVector(0.f,0.f,1.f),FVector(0.f,0.f,-1.f), FVector(0.f,1.f,0.f),FVector(0.f,-1.f,0.f),FVector(1.f,0.f,0.f),FVector(-1.f,0.f,0.f)};
 
 // Sets default values
 AVoxelTerrainActor::AVoxelTerrainActor()
@@ -37,57 +40,43 @@ void AVoxelTerrainActor::Tick(float DeltaTime)
 
 void AVoxelTerrainActor::OnConstruction(const FTransform& transform)
 {
-	m_TotalChunkElements = m_ChunkLineElements * m_ChunkLineElements * m_ChunkZElements;
-	m_ChunkLineElementsP2 = m_ChunkLineElements * m_ChunkLineElements;
-	m_VoxelSizeHalf = m_VoxelSize / 2;
+	ChunkElementsZ = 64;
+	TotalChunkElements = ChunkElementsXY * ChunkElementsXY * ChunkElementsZ;
 
-	FString voxelInfo = "Voxel_" + FString::FromInt(m_ChunkXIndex) + "_" + FString::FromInt(m_ChunkYIndex);
+	//Creating an easy to find name for our voxel
+	//Assign it to the procedural mesh component and register it
+	FString voxelInfo = "Voxel_" + FString::FromInt(ChunkXIndex) + "_" + FString::FromInt(ChunkYIndex);
 	FName name = FName(*voxelInfo);
-	m_ProceduralMeshComponent = NewObject<UProceduralMeshComponent>(this, name);
-	m_ProceduralMeshComponent->RegisterComponent();
+	ProceduralMeshComponent = NewObject<UProceduralMeshComponent>(this, name);
+	ProceduralMeshComponent->RegisterComponent();
 
-	RootComponent = m_ProceduralMeshComponent;
+	RootComponent = ProceduralMeshComponent;
 	RootComponent->SetWorldTransform(transform);
 
 	Super::OnConstruction(transform);
+
+	USimplexNoiseLibrary::setNoiseSeed(2);
 
 	GenerateChunks();
 	UpdateMesh();
 }
 
-TArray<int32> AVoxelTerrainActor::CalculateNoise_Implementation()
-{
-	TArray<int32> aa;
-	aa.SetNumUninitialized(m_ChunkLineElementsP2);
-	return aa;
-}
-
 void AVoxelTerrainActor::GenerateChunks()
 {
-	m_ChunkFields.SetNumUninitialized(m_TotalChunkElements);
+	ChunkIDs.SetNumUninitialized(TotalChunkElements);
 	TArray<int32> noise = CalculateNoise();
 
-	for (int32 x = 0; x < m_ChunkLineElements; ++x)
+	for (int32 x = 0; x < ChunkElementsXY; ++x)
 	{
-		for (int32 y = 0; y<m_ChunkLineElements; ++y)
+		for (int32 y = 0; y<ChunkElementsXY; ++y)
 		{
-			for (int32 z = 0; z< m_ChunkZElements; ++z)
+			for (int32 z = 0; z< ChunkElementsZ; ++z)
 			{
 
-				int32 index = x + (y*m_ChunkLineElements) + (z*m_ChunkLineElementsP2);
+				int32 voxelIndex = x + (y*ChunkElementsXY) + (z*(ChunkElementsXY*ChunkElementsXY));
 
-				//m_ChunkFields[index] = (z < 30 + noise[x+y*m_ChunkLineElements]) ? 1 : 0;
-
-				/*if (z == 30 + noise[x + y*m_ChunkLineElements])
-					m_ChunkFields[index] = 1;
-				else if (z == 29 + noise[x + y*m_ChunkLineElements])
-					m_ChunkFields[index] = 2;
-				else if (z < 29 + noise[x + y*m_ChunkLineElements])
-					m_ChunkFields[index] = 3;
-				else
-					m_ChunkFields[index] = 0;*/
-
-				m_ChunkFields[index] = (z > 30) ? 1 : 0;
+				//Set voxel to Air or Solid
+				ChunkIDs[voxelIndex] = (z < 30 + noise[x + y*ChunkElementsXY]) ? 1 : 0;
 			}
 		}
 	}
@@ -95,126 +84,117 @@ void AVoxelTerrainActor::GenerateChunks()
 
 void AVoxelTerrainActor::UpdateMesh()
 {
-	TArray<FVector> vertices = {};
-	TArray<int32> triangles = {};
-	TArray<FVector> normals = {};
-	TArray<FVector2D> uvs = {};
-	TArray<FProcMeshTangent> tangents = {};
-	TArray<FColor> vertexColors = {};
+	TArray<FVoxelData> voxelData;
+	voxelData.SetNum(1);
+	int id = 0;
 
-	int32 elementID = 0;
-
-	for (int32 x = 0; x < m_ChunkLineElements; ++x)
+	for(int x = 0; x < ChunkElementsXY; x++)
 	{
-		for (int32 y = 0; y<m_ChunkLineElements; ++y)
+		for(int y = 0; y < ChunkElementsXY; y++)
 		{
-			for (int32 z = 0; z< m_ChunkZElements; ++z)
+			for(int z = 0; z < ChunkElementsZ; z++)
 			{
+				int32 voxelIndex = x + (y * ChunkElementsXY) + (z * (ChunkElementsXY*ChunkElementsXY));
+				int32 meshIndex = ChunkIDs[voxelIndex];
 
-				int32 index = x + (y*m_ChunkLineElements) + (z*m_ChunkLineElementsP2);
-				int32 meshIndex = m_ChunkFields[index];
-
-				if (meshIndex > 0)
+				if(meshIndex > 0)
 				{
 					meshIndex--;
+					TArray<FVector> &vertices = voxelData[meshIndex].Vertices;
+					TArray<int32> &triangles = voxelData[meshIndex].Triangles;
+					TArray<FVector> &normals = voxelData[meshIndex].Normals;
+					TArray<FVector2D> &uvs = voxelData[meshIndex].UVs;
+					TArray<FProcMeshTangent> &tangents = voxelData[meshIndex].Tangents;
+					TArray<FColor> &vertexColors = voxelData[meshIndex].VertexColors;
+					int32 elementID = voxelData[meshIndex].ElementID;
 
-					//Adding faces,vertices,uvs and normals
-					int triangleNumber = 0;
-
-					for (int i = 0; i< 6; i++)
+					int triangleNr = 0;
+					
+					//Voxel = 6 sides so create 6 faces.
+					for(int i =0; i<6;i++)
 					{
-						int newIndex = index + Mask[i].X + (Mask[i].Y * m_ChunkLineElements) + (Mask[i].Z * m_ChunkLineElementsP2);
-						bool flag = true;
-
-						if (meshIndex >= 20)
+						int index = voxelIndex + mask[i].X + (mask[i].Y * ChunkElementsXY) + (mask[i].Z * (ChunkElementsXY*ChunkElementsXY));
+						
+						bool flag = false;
+						if(index < ChunkIDs.Num() && index >=0)
 						{
-							flag = true;
-						}
-						else if ((x + Mask[i].X < m_ChunkLineElements) && (x + Mask[i].X >= 0) && (y + Mask[i].Y < m_ChunkLineElements) && (y + Mask[i].Y >= 0))
-						{
-							if (newIndex < m_ChunkFields.Num() && newIndex >= 0)
-							{
-								if (m_ChunkFields[newIndex] < 1)
-									flag = true;
-							}
-						}
-						else
-						{
-							flag = true;
+							if (ChunkIDs[index] < 2)
+								flag = true;
 						}
 
-						if (flag)
+						if(flag)
 						{
-							triangles.Add(Triangles[0] + triangleNumber + elementID);
-							triangles.Add(Triangles[1] + triangleNumber + elementID);
-							triangles.Add(Triangles[2] + triangleNumber + elementID);
-							triangles.Add(Triangles[3] + triangleNumber + elementID);
-							triangles.Add(Triangles[4] + triangleNumber + elementID);
-							triangles.Add(Triangles[5] + triangleNumber + elementID);
-							triangleNumber += 4;	//add 4 vertices to the next triangle
+							triangles.Add(Triangles[0] + triangleNr + elementID);
+							triangles.Add(Triangles[1] + triangleNr + elementID);
+							triangles.Add(Triangles[2] + triangleNr + elementID);
+							triangles.Add(Triangles[3] + triangleNr + elementID);
+							triangles.Add(Triangles[4] + triangleNr + elementID);
+							triangles.Add(Triangles[5] + triangleNr + elementID);
+							triangleNr += 4; //Add 4 vertices to next triangle
 
-							switch (i)
-							{
-							case 0:
-							{
-								vertices.Add(FVector(-m_VoxelSizeHalf + (x * m_VoxelSize), m_VoxelSizeHalf + (y*m_VoxelSize), m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(-m_VoxelSizeHalf + (x * m_VoxelSize), -m_VoxelSizeHalf + (y*m_VoxelSize), m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(m_VoxelSizeHalf + (x * m_VoxelSize), -m_VoxelSizeHalf + (y*m_VoxelSize), m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(m_VoxelSizeHalf + (x * m_VoxelSize), m_VoxelSizeHalf + (y*m_VoxelSize), m_VoxelSizeHalf + (z*m_VoxelSize)));
 
-								normals.Append(Normals0, ARRAY_COUNT(Normals0));
-								break;
-							}
-							case 1:
+							switch(i)
 							{
-								vertices.Add(FVector(m_VoxelSizeHalf + (x * m_VoxelSize), -m_VoxelSizeHalf + (y*m_VoxelSize), -m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(-m_VoxelSizeHalf + (x * m_VoxelSize), -m_VoxelSizeHalf + (y*m_VoxelSize), -m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(-m_VoxelSizeHalf + (x * m_VoxelSize), m_VoxelSizeHalf + (y*m_VoxelSize), -m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(m_VoxelSizeHalf + (x * m_VoxelSize), m_VoxelSizeHalf + (y*m_VoxelSize), -m_VoxelSizeHalf + (z*m_VoxelSize)));
+								case 0:
+								{
+									vertices.Add(FVector(-VoxelSize/2 + (x * VoxelSize), VoxelSize / 2 + (y * VoxelSize), VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(-VoxelSize / 2 + (x * VoxelSize), -VoxelSize / 2 + (y * VoxelSize), VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(VoxelSize / 2 + (x * VoxelSize), -VoxelSize / 2 + (y * VoxelSize), VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(VoxelSize / 2 + (x * VoxelSize), VoxelSize / 2 + (y * VoxelSize), VoxelSize / 2 + (z * VoxelSize)));
 
-								normals.Append(Normals1, ARRAY_COUNT(Normals1));
-								break;
-							}
-							case 2:
-							{
-								vertices.Add(FVector(m_VoxelSizeHalf + (x * m_VoxelSize), m_VoxelSizeHalf + (y*m_VoxelSize), m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(m_VoxelSizeHalf + (x * m_VoxelSize), m_VoxelSizeHalf + (y*m_VoxelSize), -m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(-m_VoxelSizeHalf + (x * m_VoxelSize), m_VoxelSizeHalf + (y*m_VoxelSize), -m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(-m_VoxelSizeHalf + (x * m_VoxelSize), m_VoxelSizeHalf + (y*m_VoxelSize), m_VoxelSizeHalf + (z*m_VoxelSize)));
+									normals.Append(Normals0, ARRAY_COUNT(Normals0));
+									break;
+								}
+								case 1:
+								{
+									vertices.Add(FVector(VoxelSize / 2 + (x * VoxelSize), -VoxelSize / 2 + (y * VoxelSize), -VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(-VoxelSize / 2 + (x * VoxelSize), -VoxelSize / 2 + (y * VoxelSize), -VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(-VoxelSize / 2 + (x * VoxelSize), VoxelSize / 2 + (y * VoxelSize), -VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(VoxelSize / 2 + (x * VoxelSize), VoxelSize / 2 + (y * VoxelSize), -VoxelSize / 2 + (z * VoxelSize)));
 
-								normals.Append(Normals2, ARRAY_COUNT(Normals2));
-								break;
-							}
-							case 3:
-							{
-								vertices.Add(FVector(-m_VoxelSizeHalf + (x * m_VoxelSize), -m_VoxelSizeHalf + (y*m_VoxelSize), m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(-m_VoxelSizeHalf + (x * m_VoxelSize), -m_VoxelSizeHalf + (y*m_VoxelSize), -m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(m_VoxelSizeHalf + (x * m_VoxelSize), -m_VoxelSizeHalf + (y*m_VoxelSize), -m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(m_VoxelSizeHalf + (x * m_VoxelSize), -m_VoxelSizeHalf + (y*m_VoxelSize), m_VoxelSizeHalf + (z*m_VoxelSize)));
+									normals.Append(Normals1, ARRAY_COUNT(Normals0));
+									break;
+								}
+								case 2:
+								{
+									vertices.Add(FVector(VoxelSize / 2 + (x * VoxelSize), VoxelSize / 2 + (y * VoxelSize), VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(VoxelSize / 2 + (x * VoxelSize), VoxelSize / 2 + (y * VoxelSize), -VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(-VoxelSize / 2 + (x * VoxelSize), VoxelSize / 2 + (y * VoxelSize), -VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(-VoxelSize / 2 + (x * VoxelSize), VoxelSize / 2 + (y * VoxelSize), VoxelSize / 2 + (z * VoxelSize)));
 
-								normals.Append(Normals3, ARRAY_COUNT(Normals3));
-								break;
-							}
-							case 4:
-							{
-								vertices.Add(FVector(m_VoxelSizeHalf + (x * m_VoxelSize), -m_VoxelSizeHalf + (y*m_VoxelSize), m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(m_VoxelSizeHalf + (x * m_VoxelSize), -m_VoxelSizeHalf + (y*m_VoxelSize), -m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(m_VoxelSizeHalf + (x * m_VoxelSize), m_VoxelSizeHalf + (y*m_VoxelSize), -m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(m_VoxelSizeHalf + (x * m_VoxelSize), m_VoxelSizeHalf + (y*m_VoxelSize), m_VoxelSizeHalf + (z*m_VoxelSize)));
+									normals.Append(Normals2, ARRAY_COUNT(Normals0));
+									break;
+								}
+								case 3:
+								{
+									vertices.Add(FVector(-VoxelSize / 2 + (x * VoxelSize), -VoxelSize / 2 + (y * VoxelSize), VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(-VoxelSize / 2 + (x * VoxelSize), -VoxelSize / 2 + (y * VoxelSize), -VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(VoxelSize / 2 + (x * VoxelSize), -VoxelSize / 2 + (y * VoxelSize), -VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(VoxelSize / 2 + (x * VoxelSize), -VoxelSize / 2 + (y * VoxelSize), VoxelSize / 2 + (z * VoxelSize)));
 
-								normals.Append(Normals4, ARRAY_COUNT(Normals4));
-								break;
-							}
-							case 5:
-							{
-								vertices.Add(FVector(-m_VoxelSizeHalf + (x * m_VoxelSize), m_VoxelSizeHalf + (y*m_VoxelSize), m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(-m_VoxelSizeHalf + (x * m_VoxelSize), m_VoxelSizeHalf + (y*m_VoxelSize), -m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(-m_VoxelSizeHalf + (x * m_VoxelSize), -m_VoxelSizeHalf + (y*m_VoxelSize), -m_VoxelSizeHalf + (z*m_VoxelSize)));
-								vertices.Add(FVector(-m_VoxelSizeHalf + (x * m_VoxelSize), -m_VoxelSizeHalf + (y*m_VoxelSize), m_VoxelSizeHalf + (z*m_VoxelSize)));
+									normals.Append(Normals3, ARRAY_COUNT(Normals3));
+									break;
+								}
+								case 4:
+								{
+									vertices.Add(FVector(VoxelSize / 2 + (x * VoxelSize), -VoxelSize / 2 + (y * VoxelSize), VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(VoxelSize / 2 + (x * VoxelSize), -VoxelSize / 2 + (y * VoxelSize), -VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(VoxelSize / 2 + (x * VoxelSize), VoxelSize / 2 + (y * VoxelSize), -VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(VoxelSize / 2 + (x * VoxelSize), VoxelSize / 2 + (y * VoxelSize), VoxelSize / 2 + (z * VoxelSize)));
 
-								normals.Append(Normals5, ARRAY_COUNT(Normals5));
-								break;
-							}
+									normals.Append(Normals4, ARRAY_COUNT(Normals4));
+									break;
+								}
+								case 5:
+								{
+									vertices.Add(FVector(-VoxelSize / 2 + (x * VoxelSize), VoxelSize / 2 + (y * VoxelSize), VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(-VoxelSize / 2 + (x * VoxelSize), VoxelSize / 2 + (y * VoxelSize), -VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(-VoxelSize / 2 + (x * VoxelSize), -VoxelSize / 2 + (y * VoxelSize), -VoxelSize / 2 + (z * VoxelSize)));
+									vertices.Add(FVector(-VoxelSize / 2 + (x * VoxelSize), -VoxelSize / 2 + (y * VoxelSize), VoxelSize / 2 + (z * VoxelSize)));
+
+									normals.Append(Normals5, ARRAY_COUNT(Normals5));
+									break;
+								}
 							}
 
 							uvs.Append(UVs, ARRAY_COUNT(UVs));
@@ -225,14 +205,71 @@ void AVoxelTerrainActor::UpdateMesh()
 							vertexColors.Add(color);
 						}
 					}
-					elementID += triangleNumber;
+					id += triangleNr;
+					voxelData[meshIndex].ElementID += triangleNr;
 				}
 			}
 		}
 	}
+	ProceduralMeshComponent->ClearAllMeshSections();
+	for (int i = 0; i < voxelData.Num(); i++)
+	{
+		if (voxelData[i].Vertices.Num() > 0)
+			ProceduralMeshComponent->CreateMeshSection(i, voxelData[i].Vertices, voxelData[i].Triangles, voxelData[i].Normals, voxelData[i].UVs, voxelData[i].VertexColors, voxelData[i].Tangents, IsCollisionOn);
+	}
+}
 
-	m_ProceduralMeshComponent->ClearAllMeshSections();
-	m_ProceduralMeshComponent->CreateMeshSection(0, vertices, triangles, normals, uvs, vertexColors, tangents, true);
+TArray<int32> AVoxelTerrainActor::CalculateNoise()
+{
+	TArray<int32> noiseArr;
+	noiseArr.Reserve(ChunkElementsXY * ChunkElementsXY);
+	
+	for(int32 y =0; y < ChunkElementsXY; y++)
+	{
+		for(int32 x =0; x < ChunkElementsXY; x++)
+		{
+			/*float noiseValue = 
+				USimplexNoiseLibrary::SimplexNoise2D((ChunkXIndex*ChunkElementsXY + x) * 0.01f, (ChunkYIndex*ChunkElementsXY + y)*0.01f) * 4 +
+				USimplexNoiseLibrary::SimplexNoise2D((ChunkXIndex*ChunkElementsXY + x) * 0.01f, (ChunkYIndex*ChunkElementsXY + y)*0.01f) * 8 +
+				USimplexNoiseLibrary::SimplexNoise2D((ChunkXIndex*ChunkElementsXY + x) * 0.004f, (ChunkYIndex*ChunkElementsXY + y)*0.004f) * 16 +
+				FMath::Clamp(USimplexNoiseLibrary::SimplexNoise2D((ChunkXIndex*ChunkElementsXY + x)*0.05f, (ChunkYIndex * ChunkElementsXY + y) *0.05f), 0.0f, 5.0f) * 4;*/
+	
+			float noiseValue =
+				USimplexNoiseLibrary::SimplexNoise3D((ChunkXIndex*ChunkElementsXY + x) * 0.01f, (ChunkYIndex*ChunkElementsXY + y)*0.01f ,0.02) * 4 +
+				USimplexNoiseLibrary::SimplexNoise3D((ChunkXIndex*ChunkElementsXY + x) * 0.01f, (ChunkYIndex*ChunkElementsXY + y)*0.01f, 0.02) * 8 +
+				USimplexNoiseLibrary::SimplexNoise3D((ChunkXIndex*ChunkElementsXY + x) * 0.004f, (ChunkYIndex*ChunkElementsXY + y)*0.004f, 0.02) * 16 +
+				FMath::Clamp(USimplexNoiseLibrary::SimplexNoise3D((ChunkXIndex*ChunkElementsXY + x)*0.05f, (ChunkYIndex * ChunkElementsXY + y) *0.05f, 0.02f), 0.0f, 5.0f) * 4;
+	
+			noiseArr.Add(FMath::FloorToInt(noiseValue));
+		}
+	}
+	return noiseArr;
 }
 
 
+//for (int x = 0; x < Width)
+//{
+//	for (int y = 0; y < Depth)
+//	{
+//		for (int z = 0; z < Height)
+//		{
+//			if (z < Noise2D(x, y) * Height)
+//			{
+//				Array[x][y][z] = Noise3D(x, y, z)
+//			}
+//			else {
+//				Array[x][y][z] = 0
+//			}
+//		}
+//	}
+//}
+
+//for (int i = 0; i < CHUNKMAX_X; i++)
+//	for (int j = 0; j < CHUNKMAX_Y; j++)
+//		for (int k = 0; k < CHUNKMAX_Z; k++)
+//			if (isSolid(perlinNoise.get(chunkPosition.x + i,
+//				chunkPosition.y + j,
+//				chunkPosition.z + k))
+//				thisChunk[i, j, k] = new Voxel(solid);
+//			else
+//				thisChunk[i, j, k] = new Voxel(air);
