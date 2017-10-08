@@ -2,6 +2,8 @@
 
 #include "VoxelTerrainActor.h"
 #include "SimplexNoiseLibrary.h"
+#include "ConstructorHelpers.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 const int32 Triangles[] = { 2,1,0,0,3,2 };
 const FVector2D UVs[] = { FVector2D(0.0f,0.0f),FVector2D(0.0f,1.f),FVector2D(1.f,1.f),FVector2D(1.f,0.f) };
@@ -22,12 +24,34 @@ AVoxelTerrainActor::AVoxelTerrainActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//Grass
+	static ConstructorHelpers::FObjectFinder<UMaterial> grass_mat(TEXT("/Game/Materials/Grass_mat"));
+	if (grass_mat.Succeeded()) {
+		auto* MaterialInstance = UMaterialInstanceDynamic::Create(grass_mat.Object, grass_mat.Object);
+		MaterialsArray.Add(MaterialInstance);
+	}
+
+	//Snow
+	static ConstructorHelpers::FObjectFinder<UMaterial> snow_mat (TEXT("/Game/Materials/Snow_mat"));
+	if (snow_mat.Succeeded()) {
+		auto* MaterialInstance = UMaterialInstanceDynamic::Create(snow_mat.Object, snow_mat.Object);
+		MaterialsArray.Add(MaterialInstance);
+	}
+
+	//Rock
+	static ConstructorHelpers::FObjectFinder<UMaterial> rock_mat(TEXT("/Game/Materials/Rock_mat"));
+	if (rock_mat.Succeeded()) {
+		auto* MaterialInstance = UMaterialInstanceDynamic::Create(rock_mat.Object, rock_mat.Object);
+		MaterialsArray.Add(MaterialInstance);
+	}
 }
 
 // Called when the game starts or when spawned
 void AVoxelTerrainActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	
 	
 }
 
@@ -55,6 +79,10 @@ void AVoxelTerrainActor::OnConstruction(const FTransform& transform)
 
 	Super::OnConstruction(transform);
 
+	FastNoiseGenerator = new FastNoise();
+	FastNoiseGenerator->SetNoiseType(FastNoise::Perlin);
+	FastNoiseGenerator->SetSeed(12345);	
+
 	USimplexNoiseLibrary::setNoiseSeed(2);
 
 	GenerateChunks();
@@ -64,7 +92,8 @@ void AVoxelTerrainActor::OnConstruction(const FTransform& transform)
 void AVoxelTerrainActor::GenerateChunks()
 {
 	ChunkIDs.SetNumUninitialized(TotalChunkElements);
-	TArray<int32> noise = CalculateNoise();
+	
+	TArray<int32> heightMap = CalculateNoise();
 
 	for (int32 x = 0; x < ChunkElementsXY; ++x)
 	{
@@ -75,8 +104,21 @@ void AVoxelTerrainActor::GenerateChunks()
 
 				int32 voxelIndex = x + (y*ChunkElementsXY) + (z*(ChunkElementsXY*ChunkElementsXY));
 
-				//Set voxel to Air or Solid
-				ChunkIDs[voxelIndex] = (z < 30 + noise[x + y*ChunkElementsXY]) ? 1 : 0;
+				//1 = SOLID - 0 = AIR
+				//ChunkIDs[voxelIndex] = (z < 32  + heightMap[x + (y*ChunkElementsXY) + (z*(ChunkElementsXY*ChunkElementsXY))]) ? 1 : 0;
+				
+				if (z < 32 + heightMap[x + (y*ChunkElementsXY) + (z*(ChunkElementsXY*ChunkElementsXY))])
+					ChunkIDs[voxelIndex] = 1;
+				else
+					ChunkIDs[voxelIndex] = 0;
+
+
+				/*
+				 * if (z == 30 + noise[x + y * chunkLineElementsExt]) chunkFields[index] = 11;
+				else if (z == 29 + noise[x + y * chunkLineElementsExt]) chunkFields[index] = 12;
+				else if (z < 29 + noise[x + y * chunkLineElementsExt]) chunkFields[index] = 13;
+				else chunkFields[index] = 0;
+				 */
 			}
 		}
 	}
@@ -85,7 +127,7 @@ void AVoxelTerrainActor::GenerateChunks()
 void AVoxelTerrainActor::UpdateMesh()
 {
 	TArray<FVoxelData> voxelData;
-	voxelData.SetNum(1);
+	voxelData.SetNum(MaterialsArray.Num());
 	int id = 0;
 
 	for(int x = 0; x < ChunkElementsXY; x++)
@@ -219,57 +261,37 @@ void AVoxelTerrainActor::UpdateMesh()
 	}
 }
 
-TArray<int32> AVoxelTerrainActor::CalculateNoise()
+TArray<int32> AVoxelTerrainActor::CalculateNoise() const
 {
-	TArray<int32> noiseArr;
-	noiseArr.Reserve(ChunkElementsXY * ChunkElementsXY);
-	
-	for(int32 y =0; y < ChunkElementsXY; y++)
+	TArray<int32> noiseArr = {};
+
+	for (int z = 0; z<ChunkElementsZ; ++z)
 	{
-		for(int32 x =0; x < ChunkElementsXY; x++)
+		for (int y = 0; y<ChunkElementsXY; ++y)
 		{
-			/*float noiseValue = 
-				USimplexNoiseLibrary::SimplexNoise2D((ChunkXIndex*ChunkElementsXY + x) * 0.01f, (ChunkYIndex*ChunkElementsXY + y)*0.01f) * 4 +
-				USimplexNoiseLibrary::SimplexNoise2D((ChunkXIndex*ChunkElementsXY + x) * 0.01f, (ChunkYIndex*ChunkElementsXY + y)*0.01f) * 8 +
-				USimplexNoiseLibrary::SimplexNoise2D((ChunkXIndex*ChunkElementsXY + x) * 0.004f, (ChunkYIndex*ChunkElementsXY + y)*0.004f) * 16 +
-				FMath::Clamp(USimplexNoiseLibrary::SimplexNoise2D((ChunkXIndex*ChunkElementsXY + x)*0.05f, (ChunkYIndex * ChunkElementsXY + y) *0.05f), 0.0f, 5.0f) * 4;*/
-	
-			float noiseValue =
-				USimplexNoiseLibrary::SimplexNoise3D((ChunkXIndex*ChunkElementsXY + x) * 0.01f, (ChunkYIndex*ChunkElementsXY + y)*0.01f ,0.02) * 4 +
-				USimplexNoiseLibrary::SimplexNoise3D((ChunkXIndex*ChunkElementsXY + x) * 0.01f, (ChunkYIndex*ChunkElementsXY + y)*0.01f, 0.02) * 8 +
-				USimplexNoiseLibrary::SimplexNoise3D((ChunkXIndex*ChunkElementsXY + x) * 0.004f, (ChunkYIndex*ChunkElementsXY + y)*0.004f, 0.02) * 16 +
-				FMath::Clamp(USimplexNoiseLibrary::SimplexNoise3D((ChunkXIndex*ChunkElementsXY + x)*0.05f, (ChunkYIndex * ChunkElementsXY + y) *0.05f, 0.02f), 0.0f, 5.0f) * 4;
-	
-			noiseArr.Add(FMath::FloorToInt(noiseValue));
+			for (int x = 0; x<ChunkElementsXY; ++x)
+			{
+				FastNoiseGenerator->SetFrequency(0.035f);
+
+				float perlinValue = FastNoiseGenerator->GetPerlin((ChunkXIndex*ChunkElementsXY + x), (ChunkYIndex * ChunkElementsXY + y), (ChunkElementsZ + z)) * 4;
+
+				FastNoiseGenerator->SetFrequency(0.03f);
+
+				perlinValue += FastNoiseGenerator->GetPerlin((ChunkXIndex*ChunkElementsXY + x), (ChunkYIndex * ChunkElementsXY + y), (ChunkElementsZ + z)) * 8;
+
+				FastNoiseGenerator->SetFrequency(0.035f);
+
+				perlinValue += FastNoiseGenerator->GetPerlin((ChunkXIndex*ChunkElementsXY + x), (ChunkYIndex * ChunkElementsXY + y), (ChunkElementsZ + z)) * 16;
+
+				FastNoiseGenerator->SetFrequency(0.11f);
+
+				perlinValue += FMath::Clamp(FastNoiseGenerator->GetPerlin((ChunkXIndex*ChunkElementsXY + x), (ChunkYIndex * ChunkElementsXY + y), (ChunkElementsZ + z)), 0.0f, 5.0f) * 4;
+
+				noiseArr.Add(perlinValue);
+			}
 		}
 	}
 	return noiseArr;
 }
 
 
-//for (int x = 0; x < Width)
-//{
-//	for (int y = 0; y < Depth)
-//	{
-//		for (int z = 0; z < Height)
-//		{
-//			if (z < Noise2D(x, y) * Height)
-//			{
-//				Array[x][y][z] = Noise3D(x, y, z)
-//			}
-//			else {
-//				Array[x][y][z] = 0
-//			}
-//		}
-//	}
-//}
-
-//for (int i = 0; i < CHUNKMAX_X; i++)
-//	for (int j = 0; j < CHUNKMAX_Y; j++)
-//		for (int k = 0; k < CHUNKMAX_Z; k++)
-//			if (isSolid(perlinNoise.get(chunkPosition.x + i,
-//				chunkPosition.y + j,
-//				chunkPosition.z + k))
-//				thisChunk[i, j, k] = new Voxel(solid);
-//			else
-//				thisChunk[i, j, k] = new Voxel(air);
