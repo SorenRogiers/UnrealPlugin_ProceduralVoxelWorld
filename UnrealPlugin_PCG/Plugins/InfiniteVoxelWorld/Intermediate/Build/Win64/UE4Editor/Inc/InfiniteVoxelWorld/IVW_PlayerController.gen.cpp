@@ -18,6 +18,7 @@ void EmptyLinkFunctionForGeneratedCodeIVW_PlayerController() {}
 	INFINITEVOXELWORLD_API UClass* Z_Construct_UClass_AIVW_PlayerController();
 	INFINITEVOXELWORLD_API UFunction* Z_Construct_UFunction_AIVW_PlayerController_Initialize();
 	INFINITEVOXELWORLD_API UFunction* Z_Construct_UFunction_AIVW_PlayerController_RemoveChunk();
+	INFINITEVOXELWORLD_API UFunction* Z_Construct_UFunction_AIVW_PlayerController_UpdateCollision();
 	INFINITEVOXELWORLD_API UFunction* Z_Construct_UFunction_AIVW_PlayerController_UpdatePositionAndChunk();
 	INFINITEVOXELWORLD_API UClass* Z_Construct_UClass_AIVW_PlayerController_NoRegister();
 	ENGINE_API UClass* Z_Construct_UClass_APlayerController();
@@ -33,6 +34,7 @@ void EmptyLinkFunctionForGeneratedCodeIVW_PlayerController() {}
 			{ "AddChunk", (Native)&AIVW_PlayerController::execAddChunk },
 			{ "Initialize", (Native)&AIVW_PlayerController::execInitialize },
 			{ "RemoveChunk", (Native)&AIVW_PlayerController::execRemoveChunk },
+			{ "UpdateCollision", (Native)&AIVW_PlayerController::execUpdateCollision },
 			{ "UpdatePositionAndChunk", (Native)&AIVW_PlayerController::execUpdatePositionAndChunk },
 		};
 		FNativeFunctionRegistrar::RegisterFunctions(Class, AnsiFuncs, ARRAY_COUNT(AnsiFuncs));
@@ -85,6 +87,22 @@ void EmptyLinkFunctionForGeneratedCodeIVW_PlayerController() {}
 		}
 		return ReturnFunction;
 	}
+	UFunction* Z_Construct_UFunction_AIVW_PlayerController_UpdateCollision()
+	{
+		UObject* Outer = Z_Construct_UClass_AIVW_PlayerController();
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			ReturnFunction = new(EC_InternalUseOnlyConstructor, Outer, TEXT("UpdateCollision"), RF_Public|RF_Transient|RF_MarkAsNative) UFunction(FObjectInitializer(), nullptr, (EFunctionFlags)0x04020401, 65535);
+			ReturnFunction->Bind();
+			ReturnFunction->StaticLink();
+#if WITH_METADATA
+			UMetaData* MetaData = ReturnFunction->GetOutermost()->GetMetaData();
+			MetaData->SetValue(ReturnFunction, TEXT("ModuleRelativePath"), TEXT("Public/IVW_PlayerController.h"));
+#endif
+		}
+		return ReturnFunction;
+	}
 	UFunction* Z_Construct_UFunction_AIVW_PlayerController_UpdatePositionAndChunk()
 	{
 		struct IVW_PlayerController_eventUpdatePositionAndChunk_Parms
@@ -127,6 +145,7 @@ void EmptyLinkFunctionForGeneratedCodeIVW_PlayerController() {}
 				OuterClass->LinkChild(Z_Construct_UFunction_AIVW_PlayerController_AddChunk());
 				OuterClass->LinkChild(Z_Construct_UFunction_AIVW_PlayerController_Initialize());
 				OuterClass->LinkChild(Z_Construct_UFunction_AIVW_PlayerController_RemoveChunk());
+				OuterClass->LinkChild(Z_Construct_UFunction_AIVW_PlayerController_UpdateCollision());
 				OuterClass->LinkChild(Z_Construct_UFunction_AIVW_PlayerController_UpdatePositionAndChunk());
 
 				UProperty* NewProp_Chunks = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("Chunks"), RF_Public|RF_Transient|RF_MarkAsNative) UArrayProperty(CPP_PROPERTY_BASE(Chunks, AIVW_PlayerController), 0x0010000000000005);
@@ -145,6 +164,7 @@ void EmptyLinkFunctionForGeneratedCodeIVW_PlayerController() {}
 				OuterClass->AddFunctionToFunctionMapWithOverriddenName(Z_Construct_UFunction_AIVW_PlayerController_AddChunk(), "AddChunk"); // 760264403
 				OuterClass->AddFunctionToFunctionMapWithOverriddenName(Z_Construct_UFunction_AIVW_PlayerController_Initialize(), "Initialize"); // 279663566
 				OuterClass->AddFunctionToFunctionMapWithOverriddenName(Z_Construct_UFunction_AIVW_PlayerController_RemoveChunk(), "RemoveChunk"); // 2423319398
+				OuterClass->AddFunctionToFunctionMapWithOverriddenName(Z_Construct_UFunction_AIVW_PlayerController_UpdateCollision(), "UpdateCollision"); // 3689985080
 				OuterClass->AddFunctionToFunctionMapWithOverriddenName(Z_Construct_UFunction_AIVW_PlayerController_UpdatePositionAndChunk(), "UpdatePositionAndChunk"); // 4258383844
 				OuterClass->ClassConfigName = FName(TEXT("Game"));
 				static TCppClassTypeInfo<TCppClassTypeTraits<AIVW_PlayerController> > StaticCppClassTypeInfo;
@@ -183,7 +203,7 @@ void EmptyLinkFunctionForGeneratedCodeIVW_PlayerController() {}
 		check(OuterClass->GetClass());
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(AIVW_PlayerController, 3576124255);
+	IMPLEMENT_CLASS(AIVW_PlayerController, 484319130);
 	static FCompiledInDefer Z_CompiledInDefer_UClass_AIVW_PlayerController(Z_Construct_UClass_AIVW_PlayerController, &AIVW_PlayerController::StaticClass, TEXT("/Script/InfiniteVoxelWorld"), TEXT("AIVW_PlayerController"), false, nullptr, nullptr, nullptr);
 	DEFINE_VTABLE_PTR_HELPER_CTOR(AIVW_PlayerController);
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

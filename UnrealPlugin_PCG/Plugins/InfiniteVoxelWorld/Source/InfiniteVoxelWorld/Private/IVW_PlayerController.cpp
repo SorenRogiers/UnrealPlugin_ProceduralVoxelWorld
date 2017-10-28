@@ -5,11 +5,23 @@
 #include "Engine/World.h"
 #include <algorithm>
 #include "Kismet/GameplayStatics.h"
+#include "ConstructorHelpers.h"
+
+TSubclassOf<class AVoxelTerrainActor> VoxelActor_BP;
+
+AIVW_PlayerController::AIVW_PlayerController()
+{
+	static ConstructorHelpers::FObjectFinder<UBlueprint> ItemBlueprint(TEXT("Blueprint'/InfiniteVoxelWorld/IVW_VoxelTerrainActor_BP.IVW_VoxelTerrainActor_BP'"));
+	if (ItemBlueprint.Object) {
+		VoxelActor_BP = (UClass*)ItemBlueprint.Object->GeneratedClass;
+	}
+}
 
 void AIVW_PlayerController::Initialize()
 {
 	ChunkSize = ChunkLineElements * VoxelSize;
 	ChunkSizeHalf = ChunkSize / 2;
+
 }
 
 bool AIVW_PlayerController::UpdatePositionAndChunk()
@@ -33,8 +45,6 @@ bool AIVW_PlayerController::UpdatePositionAndChunk()
 
 void AIVW_PlayerController::AddChunk()
 {
-	FTransform spawnTransform = {};
-
 	for(int32 x = RenderRange * -1; x  <RenderRange; x++)
 	{
 		for(int32 y = RenderRange*-1; y < RenderRange;y++)
@@ -48,21 +58,21 @@ void AIVW_PlayerController::AddChunk()
 			spawnPosition.Y = yChunkIndex * ChunkSize;
 			spawnPosition.Z = 0;
 
-			float middleX = spawnPosition.X + ChunkSizeHalf;
-			float middleY = spawnPosition.Y + ChunkSizeHalf;
+			float middleOfChunkX = spawnPosition.X + ChunkSizeHalf;
+			float middleOfChunkY = spawnPosition.Y + ChunkSizeHalf;
 
-			if(CheckRadius(middleX,middleY))
+			auto foundCoord = ChunkCoordinates.FindByPredicate([&](const FVector2D &c) {return (chunkCoord.X == c.X && chunkCoord.Y == c.Y); });
+
+			if(CheckRadius(middleOfChunkX,middleOfChunkY))
 			{
-				auto foundCoord = ChunkCoordinates.FindByPredicate([&](const FVector2D &c) {return (chunkCoord.X == c.X && chunkCoord.Y == c.Y); });
-
 				if (foundCoord == nullptr)
 				{
 					ChunkCoordinates.Add(chunkCoord);
 
 					//Better to use BeginDeferredActorSpawnFromClass, that way the construction is ran after you initialize it.
-					FActorSpawnParameters SpawnInfo;
 					FTransform spawnTransform(FRotator::ZeroRotator, spawnPosition);
-					AVoxelTerrainActor* actor = GetWorld()->SpawnActorDeferred<AVoxelTerrainActor>(AVoxelTerrainActor::StaticClass(), spawnTransform);
+					AVoxelTerrainActor* actor = GetWorld()->SpawnActorDeferred<AVoxelTerrainActor>(VoxelActor_BP, spawnTransform);
+					
 					if (actor != nullptr)
 					{
 						actor->ChunkXIndex = xChunkIndex;
@@ -70,9 +80,11 @@ void AIVW_PlayerController::AddChunk()
 
 						UGameplayStatics::FinishSpawningActor(actor, spawnTransform);
 					}
+
 					Chunks.Add(actor);
 				}
 			}
+
 		}
 	}
 	
@@ -105,4 +117,19 @@ bool AIVW_PlayerController::CheckRadius(float x , float y) const
 		return true;
 
 	return false;
+}
+
+void AIVW_PlayerController::UpdateCollision()
+{
+	for(size_t i =0;i<Chunks.Num();++i)
+	{
+		if(Chunks[i]->ChunkXIndex == ChunkX && Chunks[i]->ChunkYIndex == ChunkY)
+		{
+			Chunks[i]->UpdateCollision(true);
+
+		} else
+		{
+			Chunks[i]->UpdateCollision(false);
+		}
+	}
 }

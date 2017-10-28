@@ -14,11 +14,16 @@ class INFINITEVOXELWORLD_API AIVW_PlayerController : public APlayerController
 GENERATED_BODY()
 	
 public:
+	AIVW_PlayerController();
+
 	UFUNCTION(BlueprintCallable)
 	void Initialize();
 
 	UFUNCTION(BlueprintCallable)
 	bool UpdatePositionAndChunk();
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateCollision();
 
 	UFUNCTION(BlueprintCallable)
 	void AddChunk();
@@ -27,15 +32,16 @@ public:
 	void RemoveChunk();
 
 	bool CheckRadius(float x, float y) const;
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 RenderRange = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 ChunkLineElements = 0;
+	int32 ChunkLineElements = 16;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 VoxelSize = 0;
+	int32 VoxelSize = 100;
 
 
 

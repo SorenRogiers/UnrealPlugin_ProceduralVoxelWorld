@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
 #include "FastNoise.h"
+#include "Components/InstancedStaticMeshComponent.h"
 #include "VoxelTerrainActor.generated.h"
 
 struct FVoxelData
@@ -39,16 +40,21 @@ protected:
 private:
 	void GenerateChunks();
 	void UpdateMesh();
+	bool InRange(int32 value, int32 range) const;
+	bool HasGrassLayerNeighbours(TArray<int32> &grid, int index);
 	TArray<int32> CalculateNoise() const;
+	
 public:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UMaterialInterface *> MaterialsArray;
+
+	TArray<UStaticMesh*> StaticMesshArray;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
 	int32 RandomSeed = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
-	int32 VoxelSize = 200;
+	int32 VoxelSize = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
 	int32 ChunkElementsXY = 16;
@@ -69,10 +75,53 @@ public:
 	TArray<int32> ChunkIDs;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
-	bool IsCollisionOn = false;
+	bool SetColissionOn = false;
+
+	UPROPERTY()
+		int32 chunkLineElementsExt;
+
+	UPROPERTY()
+		int32 chunkLineElementsP2;
+
+	UPROPERTY()
+		int32 chunkLineElementsP2Ext;
 
 	UPROPERTY()
 	UProceduralMeshComponent* ProceduralMeshComponent = nullptr;
 
 	FastNoise* FastNoiseGenerator = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Foliage Percents")
+	float TreePercentage = 0.04f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Foliage Percents")
+	float GrassPercentage = 0.04f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Foliage Percents")
+	float BlueOrchidPercentage = 0.02f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Foliage Percents")
+	float OxeyeDaisyPercentage = 0.02f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Foliage Percents")
+	float TulipPercentage = 0.02f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Foliage Percents")
+	float RosePercentage = 0.02f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Foliage Percents")
+	float PaeoniaPercentage = 0.02f;
+
+	UFUNCTION(BlueprintCallable, Category = "Voxel")
+	void UpdateCollision(bool isInColissionRange);
+
+	UFUNCTION(BlueprintCallable, Category = "Voxel")
+	void PlaceVoxel(FVector localPosition, int32 value);
+
+	UFUNCTION(BlueprintCallable, Category = "Voxel")
+	void UpdateExtras();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void AddInstanceVoxel(FVector instanceLocation, int32 type);
+	virtual void AddInstanceVoxel_Implementation(FVector instanceLocation, int32 type);
 };
