@@ -3,6 +3,7 @@
 #include "VoxelTerrainActor.h"
 #include "SimplexNoiseLibrary.h"
 #include "ConstructorHelpers.h"
+#include "IVW_GameInstance.h"
 
 const int32 Triangles[] = { 2,1,0,0,3,2 };
 const FVector2D UVs[] = { FVector2D(0.0f,0.0f),FVector2D(0.0f,1.f),FVector2D(1.f,1.f),FVector2D(1.f,0.f) };
@@ -129,6 +130,14 @@ void AVoxelTerrainActor::Tick(float DeltaTime)
 
 void AVoxelTerrainActor::OnConstruction(const FTransform& transform)
 {
+	UIVW_GameInstance* gameInstance = nullptr;
+
+	if(GetGameInstance() != nullptr)
+	{
+		gameInstance = Cast<UIVW_GameInstance>(GetGameInstance());
+		RandomSeed = gameInstance->RandomSeed;
+	}
+
 	ChunkElementsZ = 64;
 	chunkLineElementsExt = ChunkElementsXY + 2;
 	TotalChunkElements = chunkLineElementsExt * chunkLineElementsExt * ChunkElementsZ;
@@ -149,7 +158,7 @@ void AVoxelTerrainActor::OnConstruction(const FTransform& transform)
 
 	FastNoiseGenerator = new FastNoise();
 	FastNoiseGenerator->SetNoiseType(FastNoise::Simplex);
-	FastNoiseGenerator->SetSeed(12345);	
+	FastNoiseGenerator->SetSeed(RandomSeed);	
 
 	GenerateChunks();
 	UpdateMesh();
@@ -158,8 +167,8 @@ void AVoxelTerrainActor::OnConstruction(const FTransform& transform)
 
 void AVoxelTerrainActor::GenerateChunks()
 {
-	//TODO CHANGE SEED
-	FRandomStream stream = FRandomStream(12345);
+	
+	FRandomStream stream = FRandomStream(RandomSeed);
 	TArray<FIntVector> treeCenters;
 
 	ChunkIDs.SetNumUninitialized(TotalChunkElements);

@@ -20,8 +20,8 @@ void EmptyLinkFunctionForGeneratedCodeInfiniteVoxelWorld_init() {}
 			ReturnPackage = CastChecked<UPackage>(StaticFindObjectFast(UPackage::StaticClass(), nullptr, FName(TEXT("/Script/InfiniteVoxelWorld")), false, false));
 			ReturnPackage->SetPackageFlags(PKG_CompiledIn | 0x00000000);
 			FGuid Guid;
-			Guid.A = 0x310E5D77;
-			Guid.B = 0xADA0F9E2;
+			Guid.A = 0x45B61914;
+			Guid.B = 0x763483DA;
 			Guid.C = 0x00000000;
 			Guid.D = 0x00000000;
 			ReturnPackage->SetGuid(Guid);

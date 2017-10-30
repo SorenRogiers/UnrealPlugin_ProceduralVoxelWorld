@@ -58,9 +58,6 @@ public:
 	int32 ChunkY = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 RandomSeed = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector CharacterPosition = {};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
