@@ -1,0 +1,9 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/LTCG
+"D:\DAE\3DAE\Graduation Work\UnrealPlugin_ProceduralVoxelWorld\UnrealPlugin_PCG\Plugins\InfiniteVoxelWorld\Intermediate\Build\Win64\UE4\Shipping\InfiniteVoxelWorld\Module.InfiniteVoxelWorld.cpp.obj"
+"D:\DAE\3DAE\Graduation Work\UnrealPlugin_ProceduralVoxelWorld\UnrealPlugin_PCG\Plugins\InfiniteVoxelWorld\Intermediate\Build\Win64\UE4\Shipping\InfiniteVoxelWorld\Module.InfiniteVoxelWorld.gen.cpp.obj"
+"D:\DAE\3DAE\Graduation Work\UnrealPlugin_ProceduralVoxelWorld\UnrealPlugin_PCG\Intermediate\Build\Win64\UE4\Shipping\InfiniteVoxelWorld\PCLaunch.rc.res"
+/OUT:"D:\DAE\3DAE\Graduation Work\UnrealPlugin_ProceduralVoxelWorld\UnrealPlugin_PCG\Plugins\InfiniteVoxelWorld\Binaries\Win64\UE4-InfiniteVoxelWorld-Win64-Shipping.lib"
