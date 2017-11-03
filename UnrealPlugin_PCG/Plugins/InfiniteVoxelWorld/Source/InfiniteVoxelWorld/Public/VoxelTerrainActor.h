@@ -21,6 +21,26 @@ struct FVoxelData
 	int32 ElementID = 0;
 };
 
+UENUM(BlueprintType)
+enum class EVoxelType : uint8
+{
+	VE_Air				UMETA(DisplayName = "Air"),
+	VE_Grass 			UMETA(DisplayName = "Grass"),
+	VE_Dirt 			UMETA(DisplayName = "Dirt"),
+	VE_Rock 			UMETA(DisplayName = "Rock"),
+	VE_Snow 			UMETA(DisplayName = "Snow"),
+	VE_OakLog 			UMETA(DisplayName = "OakLog"),
+	VE_SpruceLog 		UMETA(DisplayName = "SpruceLog"),
+	VE_OakLeaves 		UMETA(DisplayName = "OakLeaves"),
+	VE_SpruceLeaves 	UMETA(DisplayName = "SpruceLeaves"),
+	VE_Tallgrass 		UMETA(DisplayName = "TallGrass"),
+	VE_BlueOrchid 		UMETA(DisplayName = "BlueOrchid"),
+	VE_OxeyeDaisy 		UMETA(DisplayName = "OxeyeDaisy"),
+	VE_Tulip	 		UMETA(DisplayName = "Tulip"),
+	VE_Rose		 		UMETA(DisplayName = "Rose"),
+	VE_Paeonia	 		UMETA(DisplayName = "Paeonia")
+};
+
 UCLASS()
 class INFINITEVOXELWORLD_API AVoxelTerrainActor : public AActor
 {
@@ -40,15 +60,23 @@ protected:
 private:
 	void GenerateChunks();
 	void UpdateMesh();
-	bool InRange(int32 value, int32 range) const;
-	bool HasGrassLayerNeighbours(TArray<int32> &grid, int index);
-	TArray<int32> CalculateNoise() const;
+	void CreateTrees(FIntVector treeCenter,int32 id);
+	void DrawCube(int32 faceID,int x,int y,int z) const;
 	
+	bool InRange(int32 value, int32 range) const;
+	
+	TArray<int32> CalculateNoise() const;
+	TArray<int32> CalculateBiomeMap() const;
+private:
+
+	FastNoise* FastNoiseGenerator = nullptr;
+
 public:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UMaterialInterface *> MaterialsArray;
 
-	TArray<UStaticMesh*> StaticMesshArray;
+	UPROPERTY()
+	TArray<EVoxelType> ChunkIDs;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
 	int32 RandomSeed = 0;
@@ -71,26 +99,23 @@ public:
 	UPROPERTY()
 	int32 TotalChunkElements = 0;
 
-	UPROPERTY()
-	TArray<int32> ChunkIDs;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
 	bool SetColissionOn = false;
 
 	UPROPERTY()
-		int32 chunkLineElementsExt;
+	int32 chunkLineElementsExt;
 
 	UPROPERTY()
-		int32 chunkLineElementsP2;
+	int32 chunkLineElementsP2;
 
 	UPROPERTY()
-		int32 chunkLineElementsP2Ext;
+	int32 chunkLineElementsP2Ext;
 
 	UPROPERTY()
 	UProceduralMeshComponent* ProceduralMeshComponent = nullptr;
 
-	FastNoise* FastNoiseGenerator = nullptr;
-
+	//FOLIAGE PERCENTAGES
+	//*******************
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Foliage Percents")
 	float TreePercentage = 0.04f;
 
@@ -112,16 +137,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Foliage Percents")
 	float PaeoniaPercentage = 0.02f;
 
+
+	//PUBLIC METHODS
+	//**************
 	UFUNCTION(BlueprintCallable, Category = "Voxel")
 	void UpdateCollision(bool isInColissionRange);
 
 	UFUNCTION(BlueprintCallable, Category = "Voxel")
-	void PlaceVoxel(FVector localPosition, int32 value);
+	void UpdateVoxel(FVector localPosition, int32 value);
 
 	UFUNCTION(BlueprintCallable, Category = "Voxel")
-	void UpdateExtras();
+	void DrawFoliage();
 
 	UFUNCTION(BlueprintNativeEvent)
-	void AddInstanceVoxel(FVector instanceLocation, int32 type);
-	virtual void AddInstanceVoxel_Implementation(FVector instanceLocation, int32 type);
+	void AddFoliageMesh(FVector instanceLocation, int32 type);
+	virtual void AddFoliageMesh_Implementation(FVector instanceLocation, int32 type);
 };
