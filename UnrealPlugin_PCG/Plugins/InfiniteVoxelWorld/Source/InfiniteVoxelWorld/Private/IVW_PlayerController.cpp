@@ -19,7 +19,7 @@ AIVW_PlayerController::AIVW_PlayerController()
 
 void AIVW_PlayerController::Initialize()
 {
-	ChunkSize = ChunkLineElements * VoxelSize;
+	ChunkSize = VoxelElements * VoxelSize;
 	ChunkSizeHalf = ChunkSize / 2;
 
 }

@@ -158,7 +158,7 @@ void EmptyLinkFunctionForGeneratedCodeIVW_PlayerController() {}
 				UProperty* NewProp_ChunkSizeHalf = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("ChunkSizeHalf"), RF_Public|RF_Transient|RF_MarkAsNative) UIntProperty(CPP_PROPERTY_BASE(ChunkSizeHalf, AIVW_PlayerController), 0x0010000000000005);
 				UProperty* NewProp_ChunkSize = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("ChunkSize"), RF_Public|RF_Transient|RF_MarkAsNative) UIntProperty(CPP_PROPERTY_BASE(ChunkSize, AIVW_PlayerController), 0x0010000000000005);
 				UProperty* NewProp_VoxelSize = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("VoxelSize"), RF_Public|RF_Transient|RF_MarkAsNative) UIntProperty(CPP_PROPERTY_BASE(VoxelSize, AIVW_PlayerController), 0x0010000000000005);
-				UProperty* NewProp_ChunkLineElements = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("ChunkLineElements"), RF_Public|RF_Transient|RF_MarkAsNative) UIntProperty(CPP_PROPERTY_BASE(ChunkLineElements, AIVW_PlayerController), 0x0010000000000005);
+				UProperty* NewProp_VoxelElements = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("VoxelElements"), RF_Public|RF_Transient|RF_MarkAsNative) UIntProperty(CPP_PROPERTY_BASE(VoxelElements, AIVW_PlayerController), 0x0010000000000005);
 				UProperty* NewProp_RenderRange = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("RenderRange"), RF_Public|RF_Transient|RF_MarkAsNative) UIntProperty(CPP_PROPERTY_BASE(RenderRange, AIVW_PlayerController), 0x0010000000000005);
 				OuterClass->AddFunctionToFunctionMapWithOverriddenName(Z_Construct_UFunction_AIVW_PlayerController_AddChunk(), "AddChunk"); // 760264403
 				OuterClass->AddFunctionToFunctionMapWithOverriddenName(Z_Construct_UFunction_AIVW_PlayerController_Initialize(), "Initialize"); // 279663566
@@ -190,8 +190,8 @@ void EmptyLinkFunctionForGeneratedCodeIVW_PlayerController() {}
 				MetaData->SetValue(NewProp_ChunkSize, TEXT("ModuleRelativePath"), TEXT("Public/IVW_PlayerController.h"));
 				MetaData->SetValue(NewProp_VoxelSize, TEXT("Category"), TEXT("IVW_PlayerController"));
 				MetaData->SetValue(NewProp_VoxelSize, TEXT("ModuleRelativePath"), TEXT("Public/IVW_PlayerController.h"));
-				MetaData->SetValue(NewProp_ChunkLineElements, TEXT("Category"), TEXT("IVW_PlayerController"));
-				MetaData->SetValue(NewProp_ChunkLineElements, TEXT("ModuleRelativePath"), TEXT("Public/IVW_PlayerController.h"));
+				MetaData->SetValue(NewProp_VoxelElements, TEXT("Category"), TEXT("IVW_PlayerController"));
+				MetaData->SetValue(NewProp_VoxelElements, TEXT("ModuleRelativePath"), TEXT("Public/IVW_PlayerController.h"));
 				MetaData->SetValue(NewProp_RenderRange, TEXT("Category"), TEXT("IVW_PlayerController"));
 				MetaData->SetValue(NewProp_RenderRange, TEXT("ModuleRelativePath"), TEXT("Public/IVW_PlayerController.h"));
 #endif
@@ -200,7 +200,7 @@ void EmptyLinkFunctionForGeneratedCodeIVW_PlayerController() {}
 		check(OuterClass->GetClass());
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(AIVW_PlayerController, 2848088524);
+	IMPLEMENT_CLASS(AIVW_PlayerController, 1571456860);
 	static FCompiledInDefer Z_CompiledInDefer_UClass_AIVW_PlayerController(Z_Construct_UClass_AIVW_PlayerController, &AIVW_PlayerController::StaticClass, TEXT("/Script/InfiniteVoxelWorld"), TEXT("AIVW_PlayerController"), false, nullptr, nullptr, nullptr);
 	DEFINE_VTABLE_PTR_HELPER_CTOR(AIVW_PlayerController);
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

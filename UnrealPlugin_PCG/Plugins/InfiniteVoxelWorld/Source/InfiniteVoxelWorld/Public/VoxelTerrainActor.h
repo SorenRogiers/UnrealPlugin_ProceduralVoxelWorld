@@ -58,10 +58,10 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	void GenerateChunks();
-	void UpdateMesh();
+	void CreateChunk();
+	void DrawChunk();
 	void CreateTrees(FIntVector treeCenter,int32 id);
-	void DrawCube(int32 faceID,int x,int y,int z) const;
+	void CreateCube(int32 faceID,int x,int y,int z, TArray<FVector>& vertices, TArray<FVector>& normals) const;
 	
 	bool InRange(int32 value, int32 range) const;
 	
@@ -76,7 +76,7 @@ public:
 	TArray<UMaterialInterface *> MaterialsArray;
 
 	UPROPERTY()
-	TArray<EVoxelType> ChunkIDs;
+	TArray<EVoxelType> VoxelIDs;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
 	int32 RandomSeed = 0;
@@ -85,10 +85,10 @@ public:
 	int32 VoxelSize = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
-	int32 ChunkElementsXY = 16;
+	int32 VoxelElementsXY = 16;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
-	int32 ChunkElementsZ = 0;
+	int32 VoxelElementsZ = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
 	int32 ChunkXIndex = 0;
@@ -103,13 +103,13 @@ public:
 	bool SetColissionOn = false;
 
 	UPROPERTY()
-	int32 chunkLineElementsExt;
+	int32 VoxelExtension;
 
 	UPROPERTY()
-	int32 chunkLineElementsP2;
+	int32 VoxelElementsPowered2;
 
 	UPROPERTY()
-	int32 chunkLineElementsP2Ext;
+	int32 VoxelExtensionPowered2;
 
 	UPROPERTY()
 	UProceduralMeshComponent* ProceduralMeshComponent = nullptr;

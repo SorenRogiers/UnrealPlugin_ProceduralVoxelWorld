@@ -31,6 +31,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveChunk();
 
+private:
 	bool CheckRadius(float x, float y) const;
 
 public:
@@ -38,12 +39,10 @@ public:
 	int32 RenderRange = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 ChunkLineElements = 16;
+	int32 VoxelElements = 16;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 VoxelSize = 100;
-
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 ChunkSize = 0;
