@@ -29,6 +29,7 @@ enum class EVoxelType : uint8
 	VE_Dirt 			UMETA(DisplayName = "Dirt"),
 	VE_Rock 			UMETA(DisplayName = "Rock"),
 	VE_Snow 			UMETA(DisplayName = "Snow"),
+	VE_Sand 			UMETA(DisplayName = "Sand"),
 	VE_OakLog 			UMETA(DisplayName = "OakLog"),
 	VE_SpruceLog 		UMETA(DisplayName = "SpruceLog"),
 	VE_OakLeaves 		UMETA(DisplayName = "OakLeaves"),
@@ -61,7 +62,7 @@ private:
 	void CreateChunk();
 	void DrawChunk();
 	void CreateTrees(FIntVector treeCenter,int32 id);
-	void CreateCube(int32 faceID,int x,int y,int z, TArray<FVector>& vertices, TArray<FVector>& normals) const;
+	void CreateFaces(int32 faceID,int x,int y,int z, TArray<FVector>& vertices, TArray<FVector>& normals) const;
 	
 	bool InRange(int32 value, int32 range) const;
 	

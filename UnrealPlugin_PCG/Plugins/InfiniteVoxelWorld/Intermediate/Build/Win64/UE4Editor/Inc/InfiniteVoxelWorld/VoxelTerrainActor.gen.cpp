@@ -51,17 +51,18 @@ static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EVoxelType(EVoxelType_St
 			EnumNames.Emplace(TEXT("EVoxelType::VE_Dirt"), 2);
 			EnumNames.Emplace(TEXT("EVoxelType::VE_Rock"), 3);
 			EnumNames.Emplace(TEXT("EVoxelType::VE_Snow"), 4);
-			EnumNames.Emplace(TEXT("EVoxelType::VE_OakLog"), 5);
-			EnumNames.Emplace(TEXT("EVoxelType::VE_SpruceLog"), 6);
-			EnumNames.Emplace(TEXT("EVoxelType::VE_OakLeaves"), 7);
-			EnumNames.Emplace(TEXT("EVoxelType::VE_SpruceLeaves"), 8);
-			EnumNames.Emplace(TEXT("EVoxelType::VE_Tallgrass"), 9);
-			EnumNames.Emplace(TEXT("EVoxelType::VE_BlueOrchid"), 10);
-			EnumNames.Emplace(TEXT("EVoxelType::VE_OxeyeDaisy"), 11);
-			EnumNames.Emplace(TEXT("EVoxelType::VE_Tulip"), 12);
-			EnumNames.Emplace(TEXT("EVoxelType::VE_Rose"), 13);
-			EnumNames.Emplace(TEXT("EVoxelType::VE_Paeonia"), 14);
-			EnumNames.Emplace(TEXT("EVoxelType::VE_MAX"), 15);
+			EnumNames.Emplace(TEXT("EVoxelType::VE_Sand"), 5);
+			EnumNames.Emplace(TEXT("EVoxelType::VE_OakLog"), 6);
+			EnumNames.Emplace(TEXT("EVoxelType::VE_SpruceLog"), 7);
+			EnumNames.Emplace(TEXT("EVoxelType::VE_OakLeaves"), 8);
+			EnumNames.Emplace(TEXT("EVoxelType::VE_SpruceLeaves"), 9);
+			EnumNames.Emplace(TEXT("EVoxelType::VE_Tallgrass"), 10);
+			EnumNames.Emplace(TEXT("EVoxelType::VE_BlueOrchid"), 11);
+			EnumNames.Emplace(TEXT("EVoxelType::VE_OxeyeDaisy"), 12);
+			EnumNames.Emplace(TEXT("EVoxelType::VE_Tulip"), 13);
+			EnumNames.Emplace(TEXT("EVoxelType::VE_Rose"), 14);
+			EnumNames.Emplace(TEXT("EVoxelType::VE_Paeonia"), 15);
+			EnumNames.Emplace(TEXT("EVoxelType::VE_MAX"), 16);
 			ReturnEnum->SetEnums(EnumNames, UEnum::ECppForm::EnumClass);
 			ReturnEnum->CppType = TEXT("EVoxelType");
 #if WITH_METADATA
@@ -78,6 +79,7 @@ static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EVoxelType(EVoxelType_St
 			MetaData->SetValue(ReturnEnum, TEXT("VE_Paeonia.DisplayName"), TEXT("Paeonia"));
 			MetaData->SetValue(ReturnEnum, TEXT("VE_Rock.DisplayName"), TEXT("Rock"));
 			MetaData->SetValue(ReturnEnum, TEXT("VE_Rose.DisplayName"), TEXT("Rose"));
+			MetaData->SetValue(ReturnEnum, TEXT("VE_Sand.DisplayName"), TEXT("Sand"));
 			MetaData->SetValue(ReturnEnum, TEXT("VE_Snow.DisplayName"), TEXT("Snow"));
 			MetaData->SetValue(ReturnEnum, TEXT("VE_SpruceLeaves.DisplayName"), TEXT("SpruceLeaves"));
 			MetaData->SetValue(ReturnEnum, TEXT("VE_SpruceLog.DisplayName"), TEXT("SpruceLog"));
@@ -87,7 +89,7 @@ static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EVoxelType(EVoxelType_St
 		}
 		return ReturnEnum;
 	}
-	uint32 Get_Z_Construct_UEnum_InfiniteVoxelWorld_EVoxelType_CRC() { return 1102950276U; }
+	uint32 Get_Z_Construct_UEnum_InfiniteVoxelWorld_EVoxelType_CRC() { return 354250751U; }
 	static FName NAME_AVoxelTerrainActor_AddFoliageMesh = FName(TEXT("AddFoliageMesh"));
 	void AVoxelTerrainActor::AddFoliageMesh(FVector instanceLocation, int32 type)
 	{

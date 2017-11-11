@@ -47,7 +47,7 @@ void AVoxelTerrainActor::OnConstruction(const FTransform& transform)
 	}
 
 	VoxelElementsZ = 64;
-	VoxelExtension = VoxelElementsXY + 2;
+	VoxelExtension = VoxelElementsXY+2;
 	TotalChunkElements = VoxelExtension * VoxelExtension * VoxelElementsZ;
 	VoxelElementsPowered2 = VoxelElementsXY * VoxelElementsXY;
 	VoxelExtensionPowered2 = VoxelExtension * VoxelExtension;
@@ -92,13 +92,15 @@ void AVoxelTerrainActor::CreateChunk()
 			{
 				int32 voxelIndex = x + (y * VoxelExtension) + (z * VoxelExtensionPowered2);
 
-				int heightmapValue = noise[voxelIndex];
+				int noiseValue = noise[voxelIndex];
 				
 				int biomeIndex = x + y * VoxelExtension;
 
-				if (z <= 30 + heightmapValue)
+				if (z <= 30 + noiseValue)
 				{
-					if (biomes[biomeIndex] < 0)
+					if (biomes[biomeIndex] > 7)
+						VoxelIDs[voxelIndex] = EVoxelType::VE_Sand;
+					else if (biomes[biomeIndex] < 0)
 						VoxelIDs[voxelIndex] = EVoxelType::VE_Snow;
 					else
 						VoxelIDs[voxelIndex] = EVoxelType::VE_Grass;
@@ -109,7 +111,7 @@ void AVoxelTerrainActor::CreateChunk()
 		}
 	}
 
-	//Top layer is either grass or snow
+	//Top layer is either grass or snow and the ones below are dirt
 	for(size_t i = 0; i<VoxelIDs.Num();++i)
 	{
 		int aboveLayer = i + (VoxelExtensionPowered2);
@@ -131,7 +133,7 @@ void AVoxelTerrainActor::CreateChunk()
 		int belowLayer = i - VoxelExtensionPowered2;
 
 		if (threeLayers < VoxelIDs.Num() && threeLayers >= 0 && belowLayer < VoxelIDs.Num() && belowLayer >= 0)
-			if (VoxelIDs[threeLayers] == EVoxelType::VE_Dirt && VoxelIDs[oneLayer] == EVoxelType::VE_Dirt && VoxelIDs[secondLayers] == EVoxelType::VE_Dirt && (VoxelIDs[belowLayer] != EVoxelType::VE_Grass || VoxelIDs[belowLayer] != EVoxelType::VE_Snow))
+			if (VoxelIDs[threeLayers] == EVoxelType::VE_Dirt && VoxelIDs[oneLayer] == EVoxelType::VE_Dirt && VoxelIDs[secondLayers] == EVoxelType::VE_Dirt && (VoxelIDs[belowLayer] != EVoxelType::VE_Grass || VoxelIDs[belowLayer] != EVoxelType::VE_Snow || VoxelIDs[belowLayer] != EVoxelType::VE_Sand))
 				VoxelIDs[i] = EVoxelType::VE_Rock;
 	}
 
@@ -194,7 +196,7 @@ void AVoxelTerrainActor::DrawChunk()
 
 				int32 voxelType = static_cast<int32>(VoxelIDs[voxelIndex]);
 
-				if(voxelType > 0 && voxelType <9)
+				if(voxelType > 0 && voxelType <10)
 				{
 					voxelType--;
 
@@ -232,8 +234,8 @@ void AVoxelTerrainActor::DrawChunk()
 							triangles.Add(Triangles[5] + triangleNr + elementID);
 							triangleNr += 4;
 
-							//Add 6 faces.
-							CreateCube(i, x, y, z, vertices, normals);
+							//Add faces.
+							CreateFaces(i, x, y, z, vertices, normals);
 
 							uvs.Append(UVs, ARRAY_COUNT(UVs));
 							FColor color = FColor(255, 255, 255, i);
@@ -322,7 +324,7 @@ void AVoxelTerrainActor::CreateTrees(FIntVector treeCenter, int32 id)
 		}
 	}
 }
-void AVoxelTerrainActor::CreateCube(int32 faceID, int x, int y, int z, TArray<FVector>& vertices, TArray<FVector>& normals) const
+void AVoxelTerrainActor::CreateFaces(int32 faceID, int x, int y, int z, TArray<FVector>& vertices, TArray<FVector>& normals) const
 {
 	if(faceID ==0)
 	{
@@ -452,7 +454,7 @@ void AVoxelTerrainActor::DrawFoliage()
 				int32 index = (x + 1) + (VoxelExtension * (y + 1)) + (VoxelExtensionPowered2 * z);
 				int32 meshIndex = static_cast<int32>(VoxelIDs[index]);
 
-				if (meshIndex > 8 && meshIndex <= 14)
+				if (meshIndex > 9 && meshIndex <= 15)
 					AddFoliageMesh(FVector(x * VoxelSize, y * VoxelSize, z * VoxelSize), meshIndex-1);
 				
 			}
