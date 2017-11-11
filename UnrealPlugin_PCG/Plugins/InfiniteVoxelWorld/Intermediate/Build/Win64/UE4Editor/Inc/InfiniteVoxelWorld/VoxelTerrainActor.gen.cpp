@@ -21,7 +21,6 @@ void EmptyLinkFunctionForGeneratedCodeVoxelTerrainActor() {}
 	COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FVector();
 	INFINITEVOXELWORLD_API UFunction* Z_Construct_UFunction_AVoxelTerrainActor_DrawFoliage();
 	INFINITEVOXELWORLD_API UFunction* Z_Construct_UFunction_AVoxelTerrainActor_UpdateCollision();
-	INFINITEVOXELWORLD_API UFunction* Z_Construct_UFunction_AVoxelTerrainActor_UpdateVoxel();
 	INFINITEVOXELWORLD_API UClass* Z_Construct_UClass_AVoxelTerrainActor_NoRegister();
 	ENGINE_API UClass* Z_Construct_UClass_AActor();
 	PROCEDURALMESHCOMPONENT_API UClass* Z_Construct_UClass_UProceduralMeshComponent_NoRegister();
@@ -70,11 +69,13 @@ static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EVoxelType(EVoxelType_St
 			MetaData->SetValue(ReturnEnum, TEXT("BlueprintType"), TEXT("true"));
 			MetaData->SetValue(ReturnEnum, TEXT("ModuleRelativePath"), TEXT("Public/VoxelTerrainActor.h"));
 			MetaData->SetValue(ReturnEnum, TEXT("VE_Air.DisplayName"), TEXT("Air"));
+			MetaData->SetValue(ReturnEnum, TEXT("VE_Air.ToolTip"), TEXT("Ground Voxels"));
 			MetaData->SetValue(ReturnEnum, TEXT("VE_BlueOrchid.DisplayName"), TEXT("BlueOrchid"));
 			MetaData->SetValue(ReturnEnum, TEXT("VE_Dirt.DisplayName"), TEXT("Dirt"));
 			MetaData->SetValue(ReturnEnum, TEXT("VE_Grass.DisplayName"), TEXT("Grass"));
 			MetaData->SetValue(ReturnEnum, TEXT("VE_OakLeaves.DisplayName"), TEXT("OakLeaves"));
 			MetaData->SetValue(ReturnEnum, TEXT("VE_OakLog.DisplayName"), TEXT("OakLog"));
+			MetaData->SetValue(ReturnEnum, TEXT("VE_OakLog.ToolTip"), TEXT("Foliage"));
 			MetaData->SetValue(ReturnEnum, TEXT("VE_OxeyeDaisy.DisplayName"), TEXT("OxeyeDaisy"));
 			MetaData->SetValue(ReturnEnum, TEXT("VE_Paeonia.DisplayName"), TEXT("Paeonia"));
 			MetaData->SetValue(ReturnEnum, TEXT("VE_Rock.DisplayName"), TEXT("Rock"));
@@ -89,7 +90,7 @@ static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EVoxelType(EVoxelType_St
 		}
 		return ReturnEnum;
 	}
-	uint32 Get_Z_Construct_UEnum_InfiniteVoxelWorld_EVoxelType_CRC() { return 354250751U; }
+	uint32 Get_Z_Construct_UEnum_InfiniteVoxelWorld_EVoxelType_CRC() { return 571872391U; }
 	static FName NAME_AVoxelTerrainActor_AddFoliageMesh = FName(TEXT("AddFoliageMesh"));
 	void AVoxelTerrainActor::AddFoliageMesh(FVector instanceLocation, int32 type)
 	{
@@ -105,7 +106,6 @@ static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EVoxelType(EVoxelType_St
 			{ "AddFoliageMesh", (Native)&AVoxelTerrainActor::execAddFoliageMesh },
 			{ "DrawFoliage", (Native)&AVoxelTerrainActor::execDrawFoliage },
 			{ "UpdateCollision", (Native)&AVoxelTerrainActor::execUpdateCollision },
-			{ "UpdateVoxel", (Native)&AVoxelTerrainActor::execUpdateVoxel },
 		};
 		FNativeFunctionRegistrar::RegisterFunctions(Class, AnsiFuncs, ARRAY_COUNT(AnsiFuncs));
 	}
@@ -168,30 +168,6 @@ static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EVoxelType(EVoxelType_St
 		}
 		return ReturnFunction;
 	}
-	UFunction* Z_Construct_UFunction_AVoxelTerrainActor_UpdateVoxel()
-	{
-		struct VoxelTerrainActor_eventUpdateVoxel_Parms
-		{
-			FVector localPosition;
-			int32 value;
-		};
-		UObject* Outer = Z_Construct_UClass_AVoxelTerrainActor();
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			ReturnFunction = new(EC_InternalUseOnlyConstructor, Outer, TEXT("UpdateVoxel"), RF_Public|RF_Transient|RF_MarkAsNative) UFunction(FObjectInitializer(), nullptr, (EFunctionFlags)0x04820401, 65535, sizeof(VoxelTerrainActor_eventUpdateVoxel_Parms));
-			UProperty* NewProp_value = new(EC_InternalUseOnlyConstructor, ReturnFunction, TEXT("value"), RF_Public|RF_Transient|RF_MarkAsNative) UIntProperty(CPP_PROPERTY_BASE(value, VoxelTerrainActor_eventUpdateVoxel_Parms), 0x0010000000000080);
-			UProperty* NewProp_localPosition = new(EC_InternalUseOnlyConstructor, ReturnFunction, TEXT("localPosition"), RF_Public|RF_Transient|RF_MarkAsNative) UStructProperty(CPP_PROPERTY_BASE(localPosition, VoxelTerrainActor_eventUpdateVoxel_Parms), 0x0010000000000080, Z_Construct_UScriptStruct_FVector());
-			ReturnFunction->Bind();
-			ReturnFunction->StaticLink();
-#if WITH_METADATA
-			UMetaData* MetaData = ReturnFunction->GetOutermost()->GetMetaData();
-			MetaData->SetValue(ReturnFunction, TEXT("Category"), TEXT("Voxel"));
-			MetaData->SetValue(ReturnFunction, TEXT("ModuleRelativePath"), TEXT("Public/VoxelTerrainActor.h"));
-#endif
-		}
-		return ReturnFunction;
-	}
 	UClass* Z_Construct_UClass_AVoxelTerrainActor_NoRegister()
 	{
 		return AVoxelTerrainActor::StaticClass();
@@ -212,7 +188,6 @@ static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EVoxelType(EVoxelType_St
 				OuterClass->LinkChild(Z_Construct_UFunction_AVoxelTerrainActor_AddFoliageMesh());
 				OuterClass->LinkChild(Z_Construct_UFunction_AVoxelTerrainActor_DrawFoliage());
 				OuterClass->LinkChild(Z_Construct_UFunction_AVoxelTerrainActor_UpdateCollision());
-				OuterClass->LinkChild(Z_Construct_UFunction_AVoxelTerrainActor_UpdateVoxel());
 
 				UProperty* NewProp_PaeoniaPercentage = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("PaeoniaPercentage"), RF_Public|RF_Transient|RF_MarkAsNative) UFloatProperty(CPP_PROPERTY_BASE(PaeoniaPercentage, AVoxelTerrainActor), 0x0010000000000005);
 				UProperty* NewProp_RosePercentage = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("RosePercentage"), RF_Public|RF_Transient|RF_MarkAsNative) UFloatProperty(CPP_PROPERTY_BASE(RosePercentage, AVoxelTerrainActor), 0x0010000000000005);
@@ -222,7 +197,6 @@ static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EVoxelType(EVoxelType_St
 				UProperty* NewProp_GrassPercentage = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("GrassPercentage"), RF_Public|RF_Transient|RF_MarkAsNative) UFloatProperty(CPP_PROPERTY_BASE(GrassPercentage, AVoxelTerrainActor), 0x0010000000000005);
 				UProperty* NewProp_TreePercentage = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("TreePercentage"), RF_Public|RF_Transient|RF_MarkAsNative) UFloatProperty(CPP_PROPERTY_BASE(TreePercentage, AVoxelTerrainActor), 0x0010000000000005);
 				UProperty* NewProp_ProceduralMeshComponent = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("ProceduralMeshComponent"), RF_Public|RF_Transient|RF_MarkAsNative) UObjectProperty(CPP_PROPERTY_BASE(ProceduralMeshComponent, AVoxelTerrainActor), 0x0010000000080008, Z_Construct_UClass_UProceduralMeshComponent_NoRegister());
-				UProperty* NewProp_VoxelExtensionPowered2 = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("VoxelExtensionPowered2"), RF_Public|RF_Transient|RF_MarkAsNative) UIntProperty(CPP_PROPERTY_BASE(VoxelExtensionPowered2, AVoxelTerrainActor), 0x0010000000000000);
 				UProperty* NewProp_VoxelElementsPowered2 = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("VoxelElementsPowered2"), RF_Public|RF_Transient|RF_MarkAsNative) UIntProperty(CPP_PROPERTY_BASE(VoxelElementsPowered2, AVoxelTerrainActor), 0x0010000000000000);
 				UProperty* NewProp_VoxelExtension = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("VoxelExtension"), RF_Public|RF_Transient|RF_MarkAsNative) UIntProperty(CPP_PROPERTY_BASE(VoxelExtension, AVoxelTerrainActor), 0x0010000000000000);
 				CPP_BOOL_PROPERTY_BITMASK_STRUCT(SetColissionOn, AVoxelTerrainActor);
@@ -237,12 +211,13 @@ static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EVoxelType(EVoxelType_St
 				UProperty* NewProp_VoxelIDs = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("VoxelIDs"), RF_Public|RF_Transient|RF_MarkAsNative) UArrayProperty(CPP_PROPERTY_BASE(VoxelIDs, AVoxelTerrainActor), 0x0010000000000000);
 				UProperty* NewProp_VoxelIDs_Inner = new(EC_InternalUseOnlyConstructor, NewProp_VoxelIDs, TEXT("VoxelIDs"), RF_Public|RF_Transient|RF_MarkAsNative) UEnumProperty(FObjectInitializer(), EC_CppProperty, 0, 0x0000000000000000, Z_Construct_UEnum_InfiniteVoxelWorld_EVoxelType());
 				UProperty* NewProp_VoxelIDs_Inner_Underlying = new(EC_InternalUseOnlyConstructor, NewProp_VoxelIDs_Inner, TEXT("UnderlyingType"), RF_Public|RF_Transient|RF_MarkAsNative) UByteProperty(FObjectInitializer(), EC_CppProperty, 0, 0x0000000000000000);
-				UProperty* NewProp_MaterialsArray = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("MaterialsArray"), RF_Public|RF_Transient|RF_MarkAsNative) UArrayProperty(CPP_PROPERTY_BASE(MaterialsArray, AVoxelTerrainActor), 0x0010000000000005);
-				UProperty* NewProp_MaterialsArray_Inner = new(EC_InternalUseOnlyConstructor, NewProp_MaterialsArray, TEXT("MaterialsArray"), RF_Public|RF_Transient|RF_MarkAsNative) UObjectProperty(FObjectInitializer(), EC_CppProperty, 0, 0x0000000000000000, Z_Construct_UClass_UMaterialInterface_NoRegister());
+				UProperty* NewProp_OtherMaterials = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("OtherMaterials"), RF_Public|RF_Transient|RF_MarkAsNative) UArrayProperty(CPP_PROPERTY_BASE(OtherMaterials, AVoxelTerrainActor), 0x0010000000000005);
+				UProperty* NewProp_OtherMaterials_Inner = new(EC_InternalUseOnlyConstructor, NewProp_OtherMaterials, TEXT("OtherMaterials"), RF_Public|RF_Transient|RF_MarkAsNative) UObjectProperty(FObjectInitializer(), EC_CppProperty, 0, 0x0000000000000000, Z_Construct_UClass_UMaterialInterface_NoRegister());
+				UProperty* NewProp_VoxelMaterials = new(EC_InternalUseOnlyConstructor, OuterClass, TEXT("VoxelMaterials"), RF_Public|RF_Transient|RF_MarkAsNative) UArrayProperty(CPP_PROPERTY_BASE(VoxelMaterials, AVoxelTerrainActor), 0x0010000000000005);
+				UProperty* NewProp_VoxelMaterials_Inner = new(EC_InternalUseOnlyConstructor, NewProp_VoxelMaterials, TEXT("VoxelMaterials"), RF_Public|RF_Transient|RF_MarkAsNative) UObjectProperty(FObjectInitializer(), EC_CppProperty, 0, 0x0000000000000000, Z_Construct_UClass_UMaterialInterface_NoRegister());
 				OuterClass->AddFunctionToFunctionMapWithOverriddenName(Z_Construct_UFunction_AVoxelTerrainActor_AddFoliageMesh(), "AddFoliageMesh"); // 3299625426
 				OuterClass->AddFunctionToFunctionMapWithOverriddenName(Z_Construct_UFunction_AVoxelTerrainActor_DrawFoliage(), "DrawFoliage"); // 4128768090
 				OuterClass->AddFunctionToFunctionMapWithOverriddenName(Z_Construct_UFunction_AVoxelTerrainActor_UpdateCollision(), "UpdateCollision"); // 673427877
-				OuterClass->AddFunctionToFunctionMapWithOverriddenName(Z_Construct_UFunction_AVoxelTerrainActor_UpdateVoxel(), "UpdateVoxel"); // 1603237417
 				static TCppClassTypeInfo<TCppClassTypeTraits<AVoxelTerrainActor> > StaticCppClassTypeInfo;
 				OuterClass->SetCppTypeInfo(&StaticCppClassTypeInfo);
 				OuterClass->StaticLink();
@@ -267,7 +242,6 @@ static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EVoxelType(EVoxelType_St
 				MetaData->SetValue(NewProp_TreePercentage, TEXT("ToolTip"), TEXT("FOLIAGE PERCENTAGES"));
 				MetaData->SetValue(NewProp_ProceduralMeshComponent, TEXT("EditInline"), TEXT("true"));
 				MetaData->SetValue(NewProp_ProceduralMeshComponent, TEXT("ModuleRelativePath"), TEXT("Public/VoxelTerrainActor.h"));
-				MetaData->SetValue(NewProp_VoxelExtensionPowered2, TEXT("ModuleRelativePath"), TEXT("Public/VoxelTerrainActor.h"));
 				MetaData->SetValue(NewProp_VoxelElementsPowered2, TEXT("ModuleRelativePath"), TEXT("Public/VoxelTerrainActor.h"));
 				MetaData->SetValue(NewProp_VoxelExtension, TEXT("ModuleRelativePath"), TEXT("Public/VoxelTerrainActor.h"));
 				MetaData->SetValue(NewProp_SetColissionOn, TEXT("Category"), TEXT("VoxelTerrainActor"));
@@ -293,15 +267,17 @@ static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EVoxelType(EVoxelType_St
 				MetaData->SetValue(NewProp_RandomSeed, TEXT("ExposeOnSpawn"), TEXT("TRUE"));
 				MetaData->SetValue(NewProp_RandomSeed, TEXT("ModuleRelativePath"), TEXT("Public/VoxelTerrainActor.h"));
 				MetaData->SetValue(NewProp_VoxelIDs, TEXT("ModuleRelativePath"), TEXT("Public/VoxelTerrainActor.h"));
-				MetaData->SetValue(NewProp_MaterialsArray, TEXT("Category"), TEXT("VoxelTerrainActor"));
-				MetaData->SetValue(NewProp_MaterialsArray, TEXT("ModuleRelativePath"), TEXT("Public/VoxelTerrainActor.h"));
+				MetaData->SetValue(NewProp_OtherMaterials, TEXT("Category"), TEXT("VoxelTerrainActor"));
+				MetaData->SetValue(NewProp_OtherMaterials, TEXT("ModuleRelativePath"), TEXT("Public/VoxelTerrainActor.h"));
+				MetaData->SetValue(NewProp_VoxelMaterials, TEXT("Category"), TEXT("VoxelTerrainActor"));
+				MetaData->SetValue(NewProp_VoxelMaterials, TEXT("ModuleRelativePath"), TEXT("Public/VoxelTerrainActor.h"));
 #endif
 			}
 		}
 		check(OuterClass->GetClass());
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(AVoxelTerrainActor, 39575613);
+	IMPLEMENT_CLASS(AVoxelTerrainActor, 2050980744);
 	static FCompiledInDefer Z_CompiledInDefer_UClass_AVoxelTerrainActor(Z_Construct_UClass_AVoxelTerrainActor, &AVoxelTerrainActor::StaticClass, TEXT("/Script/InfiniteVoxelWorld"), TEXT("AVoxelTerrainActor"), false, nullptr, nullptr, nullptr);
 	DEFINE_VTABLE_PTR_HELPER_CTOR(AVoxelTerrainActor);
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

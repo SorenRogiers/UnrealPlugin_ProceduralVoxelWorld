@@ -50,7 +50,6 @@ void AVoxelTerrainActor::OnConstruction(const FTransform& transform)
 	VoxelExtension = VoxelElementsXY+2;
 	TotalChunkElements = VoxelExtension * VoxelExtension * VoxelElementsZ;
 	VoxelElementsPowered2 = VoxelElementsXY * VoxelElementsXY;
-	VoxelExtensionPowered2 = VoxelExtension * VoxelExtension;
 
 	//Creating an easy to find name for our voxel
 	//Assign it to the procedural mesh component and register it
@@ -90,7 +89,7 @@ void AVoxelTerrainActor::CreateChunk()
 		{
 			for (int32 z = 0; z< VoxelElementsZ; ++z)
 			{
-				int32 voxelIndex = x + (y * VoxelExtension) + (z * VoxelExtensionPowered2);
+				int32 voxelIndex = x + (y * VoxelExtension) + (z * (VoxelExtension * VoxelExtension));
 
 				int noiseValue = noise[voxelIndex];
 				
@@ -114,7 +113,7 @@ void AVoxelTerrainActor::CreateChunk()
 	//Top layer is either grass or snow and the ones below are dirt
 	for(size_t i = 0; i<VoxelIDs.Num();++i)
 	{
-		int aboveLayer = i + (VoxelExtensionPowered2);
+		int aboveLayer = i + (VoxelExtension * VoxelExtension);
 
 		if (aboveLayer < VoxelIDs.Num() && aboveLayer >= 0)
 		{
@@ -127,14 +126,28 @@ void AVoxelTerrainActor::CreateChunk()
 	//Start the rock layers after some layers of dirt
 	for (size_t i = 0; i<VoxelIDs.Num(); ++i)
 	{
-		int threeLayers = i + (3*VoxelExtensionPowered2);
-		int oneLayer = i + (VoxelExtensionPowered2);
-		int secondLayers = i + (2*VoxelExtensionPowered2);
-		int belowLayer = i - VoxelExtensionPowered2;
+		bool isFourLayersDirt = false;
+		
+		int count = 0;
+		
+		for(size_t l =0; l<4;++l)
+		{
+			int layer = i + (l * (VoxelExtension * VoxelExtension));
 
-		if (threeLayers < VoxelIDs.Num() && threeLayers >= 0 && belowLayer < VoxelIDs.Num() && belowLayer >= 0)
-			if (VoxelIDs[threeLayers] == EVoxelType::VE_Dirt && VoxelIDs[oneLayer] == EVoxelType::VE_Dirt && VoxelIDs[secondLayers] == EVoxelType::VE_Dirt && (VoxelIDs[belowLayer] != EVoxelType::VE_Grass || VoxelIDs[belowLayer] != EVoxelType::VE_Snow || VoxelIDs[belowLayer] != EVoxelType::VE_Sand))
-				VoxelIDs[i] = EVoxelType::VE_Rock;
+			if (layer < VoxelIDs.Num() && layer > 0)
+			{
+				if (VoxelIDs[layer] == EVoxelType::VE_Dirt)
+				{
+					count++;
+				}
+			}
+		}
+
+		if (count > 3)
+			isFourLayersDirt = true;
+
+		if (isFourLayersDirt)
+			VoxelIDs[i] = EVoxelType::VE_Rock;
 	}
 
 	// smaller range for trees - we dont want to spawn them on shared areas or edges
@@ -144,10 +157,10 @@ void AVoxelTerrainActor::CreateChunk()
 		{
 			for (int32 z = 0; z < VoxelElementsZ; z++)
 			{				
-				int32 voxelIndex = x + (y * VoxelExtension) + (z * VoxelExtensionPowered2);
+				int32 voxelIndex = x + (y * VoxelExtension) + (z * (VoxelExtension * VoxelExtension));
 				int heightmapValue = noise[voxelIndex];
-				int layerBelow = x + (y*VoxelExtension) + ((z - 1)*VoxelExtensionPowered2);
-				int layersFourAbove = x + (y*VoxelExtension) + ((z + 4)*VoxelExtensionPowered2);
+				int layerBelow = x + (y*VoxelExtension) + ((z - 1)*(VoxelExtension * VoxelExtension));
+				int layersSixAbove = x + (y*VoxelExtension) + ((z + 6)*(VoxelExtension * VoxelExtension));
 
 				//TREES
 				//*****
@@ -155,7 +168,7 @@ void AVoxelTerrainActor::CreateChunk()
 					&& z == 31 + heightmapValue 
 					&& VoxelIDs[voxelIndex] == EVoxelType::VE_Air
 					&& (VoxelIDs[layerBelow] == EVoxelType::VE_Grass || VoxelIDs[layerBelow] == EVoxelType::VE_Snow) 
-					&& VoxelIDs[layersFourAbove] == EVoxelType::VE_Air)
+					&& VoxelIDs[layersSixAbove] == EVoxelType::VE_Air)
 				{
 					CreateTrees(FIntVector(x, y, z), static_cast<int32>(VoxelIDs[layerBelow]));
 				}
@@ -174,7 +187,6 @@ void AVoxelTerrainActor::CreateChunk()
 					VoxelIDs[voxelIndex] = EVoxelType::VE_Rose;
 				else if (stream.FRand() < PaeoniaPercentage && z == 31 + heightmapValue && VoxelIDs[voxelIndex] == EVoxelType::VE_Air && VoxelIDs[layerBelow] == EVoxelType::VE_Grass)
 					VoxelIDs[voxelIndex] =EVoxelType::VE_Paeonia;
-				;
 			}
 		}
 	}
@@ -183,7 +195,8 @@ void AVoxelTerrainActor::CreateChunk()
 void AVoxelTerrainActor::DrawChunk()
 {
 	TArray<FVoxelData> voxels;
-	voxels.SetNum(MaterialsArray.Num());
+	voxels.SetNum(VoxelMaterials.Num());
+
 	int id = 0;
 
 	for(int x = 0; x < VoxelElementsXY; x++)
@@ -192,7 +205,7 @@ void AVoxelTerrainActor::DrawChunk()
 		{
 			for(int z = 0; z < VoxelElementsZ; z++)
 			{
-				int32 voxelIndex = (x + 1) + (VoxelExtension * (y + 1)) + (VoxelExtensionPowered2 * z);
+				int32 voxelIndex = (x + 1) + (VoxelExtension * (y + 1)) + ((VoxelExtension * VoxelExtension) * z);
 
 				int32 voxelType = static_cast<int32>(VoxelIDs[voxelIndex]);
 
@@ -213,7 +226,7 @@ void AVoxelTerrainActor::DrawChunk()
 					//Depending on the mask we render a face or not.
 					for(int i =0; i<6;i++)
 					{
-						int index = voxelIndex + Mask[i].X + (Mask[i].Y * VoxelExtension) + (Mask[i].Z * VoxelExtensionPowered2);
+						int index = voxelIndex + Mask[i].X + (Mask[i].Y * VoxelExtension) + (Mask[i].Z * (VoxelExtension * VoxelExtension));
 
 						bool flag = false;
 						
@@ -265,9 +278,9 @@ void AVoxelTerrainActor::DrawChunk()
 	}
 
 	//Apply appropriate Materials
-	for (int32 i = 0; i<MaterialsArray.Num(); ++i)
+	for (int32 i = 0; i<VoxelMaterials.Num(); ++i)
 	{
-		ProceduralMeshComponent->SetMaterial(i, MaterialsArray[i]);
+			ProceduralMeshComponent->SetMaterial(i,VoxelMaterials[i]);
 	}
 }
 
@@ -281,9 +294,9 @@ void AVoxelTerrainActor::CreateTrees(FIntVector treeCenter, int32 id)
 	for (int32 h = 0; h < treeHeight; h++)
 	{
 		if(id == 1)
-			VoxelIDs[treeCenter.X + (treeCenter.Y * VoxelExtension) + ((treeCenter.Z + h) * VoxelExtensionPowered2)] = EVoxelType::VE_OakLog;
+			VoxelIDs[treeCenter.X + (treeCenter.Y * VoxelExtension) + ((treeCenter.Z + h) * (VoxelExtension * VoxelExtension))] = EVoxelType::VE_OakLog;
 		else if(id == 4)
-			VoxelIDs[treeCenter.X + (treeCenter.Y * VoxelExtension) + ((treeCenter.Z + h) * VoxelExtensionPowered2)] = EVoxelType::VE_SpruceLog;
+			VoxelIDs[treeCenter.X + (treeCenter.Y * VoxelExtension) + ((treeCenter.Z + h) * (VoxelExtension * VoxelExtension))] = EVoxelType::VE_SpruceLog;
 	}
 
 	//Leaves
@@ -293,9 +306,6 @@ void AVoxelTerrainActor::CreateTrees(FIntVector treeCenter, int32 id)
 		{
 			for (int32 tree_z = 1; tree_z > -2; tree_z--)
 			{
-				//Tree Height + 1 at z check because we add 1 layer of leaves above it
-				if (InRange(tree_x + treeCenter.X, VoxelElementsXY) && InRange(tree_y + treeCenter.Y, VoxelElementsXY) && InRange(tree_z + treeCenter.Z + treeHeight + 1, VoxelElementsZ))
-				{
 					int32 randomX = stream.RandRange(0, 2);
 					int32 randomY = stream.RandRange(0, 2);
 					int32 randomZ = stream.RandRange(0, 2);
@@ -310,7 +320,7 @@ void AVoxelTerrainActor::CreateTrees(FIntVector treeCenter, int32 id)
 					{
 						if (stream.FRand() < 0.9 || radius <= 1.4)
 						{
-							int leafIndex = treeCenter.X + tree_x + (VoxelExtension * (treeCenter.Y + tree_y)) + (VoxelExtensionPowered2 * (treeCenter.Z + tree_z + treeHeight));
+							int leafIndex = treeCenter.X + tree_x + (VoxelExtension * (treeCenter.Y + tree_y)) + ((VoxelExtension * VoxelExtension) * (treeCenter.Z + tree_z + treeHeight));
 							
 							if (VoxelIDs[leafIndex] == EVoxelType::VE_Air && static_cast<EVoxelType>(id) == EVoxelType::VE_Grass)
 								VoxelIDs[leafIndex] = EVoxelType::VE_OakLeaves;
@@ -318,7 +328,7 @@ void AVoxelTerrainActor::CreateTrees(FIntVector treeCenter, int32 id)
 								VoxelIDs[leafIndex] = EVoxelType::VE_SpruceLeaves;
 						}
 					}
-				}
+				
 
 			}
 		}
@@ -441,7 +451,7 @@ TArray<int32> AVoxelTerrainActor::CalculateBiomeMap() const
 	return biomeNoise;
 }
 
-//If our meshindex is higher tha 8 and lower than 15 we know its grass or flowers
+//If our meshindex is higher than 9 and lower than 15 we know its grass or flowers
 //So we change the mesh
 void AVoxelTerrainActor::DrawFoliage()
 {
@@ -451,16 +461,17 @@ void AVoxelTerrainActor::DrawFoliage()
 		{
 			for (int32 z = 0; z < VoxelElementsZ; z++)
 			{
-				int32 index = (x + 1) + (VoxelExtension * (y + 1)) + (VoxelExtensionPowered2 * z);
+				int32 index = (x + 1) + (VoxelExtension * (y + 1)) + ((VoxelExtension * VoxelExtension) * z);
 				int32 meshIndex = static_cast<int32>(VoxelIDs[index]);
 
 				if (meshIndex > 9 && meshIndex <= 15)
-					AddFoliageMesh(FVector(x * VoxelSize, y * VoxelSize, z * VoxelSize), meshIndex-1);
+					AddFoliageMesh(FVector(x * VoxelSize, y * VoxelSize, z * VoxelSize), meshIndex - (VoxelMaterials.Num()+1));
 				
 			}
 		}
 	}
 }
+
 void AVoxelTerrainActor::UpdateCollision(bool isInColissionRange)
 {
 	if(SetColissionOn != isInColissionRange)
@@ -469,20 +480,7 @@ void AVoxelTerrainActor::UpdateCollision(bool isInColissionRange)
 		DrawChunk();
 	}
 }
-void AVoxelTerrainActor::UpdateVoxel(FVector localPosition, int32 value)
-{
-	int32 x = localPosition.X / VoxelSize+1;
-	int32 y = localPosition.Y / VoxelSize+1;
-	int32 z = localPosition.Z / VoxelSize;
 
-	int32 index = x + (y * VoxelExtension) + (z * VoxelExtensionPowered2);
-	UE_LOG(LogTemp, Warning, TEXT("VALUE = %d"), index);
-
-	VoxelIDs[index] = static_cast<EVoxelType>(value);
-
-	DrawChunk();
-}
 void AVoxelTerrainActor::AddFoliageMesh_Implementation(FVector instanceLocation, int32 type)
 {
 }
-

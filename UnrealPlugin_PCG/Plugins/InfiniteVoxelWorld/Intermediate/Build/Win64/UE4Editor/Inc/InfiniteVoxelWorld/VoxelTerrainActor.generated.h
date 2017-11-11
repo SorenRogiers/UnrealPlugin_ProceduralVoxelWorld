@@ -14,7 +14,7 @@ struct FVector;
 #endif
 #define INFINITEVOXELWORLD_VoxelTerrainActor_generated_h
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_RPC_WRAPPERS \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_RPC_WRAPPERS \
 	virtual void AddFoliageMesh_Implementation(FVector instanceLocation, int32 type); \
  \
 	DECLARE_FUNCTION(execAddFoliageMesh) \
@@ -35,16 +35,6 @@ struct FVector;
 		P_NATIVE_END; \
 	} \
  \
-	DECLARE_FUNCTION(execUpdateVoxel) \
-	{ \
-		P_GET_STRUCT(FVector,Z_Param_localPosition); \
-		P_GET_PROPERTY(UIntProperty,Z_Param_value); \
-		P_FINISH; \
-		P_NATIVE_BEGIN; \
-		this->UpdateVoxel(Z_Param_localPosition,Z_Param_value); \
-		P_NATIVE_END; \
-	} \
- \
 	DECLARE_FUNCTION(execUpdateCollision) \
 	{ \
 		P_GET_UBOOL(Z_Param_isInColissionRange); \
@@ -55,7 +45,7 @@ struct FVector;
 	}
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_RPC_WRAPPERS_NO_PURE_DECLS \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_RPC_WRAPPERS_NO_PURE_DECLS \
  \
 	DECLARE_FUNCTION(execAddFoliageMesh) \
 	{ \
@@ -75,16 +65,6 @@ struct FVector;
 		P_NATIVE_END; \
 	} \
  \
-	DECLARE_FUNCTION(execUpdateVoxel) \
-	{ \
-		P_GET_STRUCT(FVector,Z_Param_localPosition); \
-		P_GET_PROPERTY(UIntProperty,Z_Param_value); \
-		P_FINISH; \
-		P_NATIVE_BEGIN; \
-		this->UpdateVoxel(Z_Param_localPosition,Z_Param_value); \
-		P_NATIVE_END; \
-	} \
- \
 	DECLARE_FUNCTION(execUpdateCollision) \
 	{ \
 		P_GET_UBOOL(Z_Param_isInColissionRange); \
@@ -95,7 +75,7 @@ struct FVector;
 	}
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_EVENT_PARMS \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_EVENT_PARMS \
 	struct VoxelTerrainActor_eventAddFoliageMesh_Parms \
 	{ \
 		FVector instanceLocation; \
@@ -103,8 +83,8 @@ struct FVector;
 	};
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_CALLBACK_WRAPPERS
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_INCLASS_NO_PURE_DECLS \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_CALLBACK_WRAPPERS
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesAVoxelTerrainActor(); \
 	friend INFINITEVOXELWORLD_API class UClass* Z_Construct_UClass_AVoxelTerrainActor(); \
@@ -114,7 +94,7 @@ public: \
 	enum {IsIntrinsic=COMPILED_IN_INTRINSIC};
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_INCLASS \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_INCLASS \
 private: \
 	static void StaticRegisterNativesAVoxelTerrainActor(); \
 	friend INFINITEVOXELWORLD_API class UClass* Z_Construct_UClass_AVoxelTerrainActor(); \
@@ -124,7 +104,7 @@ public: \
 	enum {IsIntrinsic=COMPILED_IN_INTRINSIC};
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_STANDARD_CONSTRUCTORS \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_STANDARD_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API AVoxelTerrainActor(const FObjectInitializer& ObjectInitializer); \
 	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(AVoxelTerrainActor) \
@@ -137,7 +117,7 @@ private: \
 public:
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_ENHANCED_CONSTRUCTORS \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	NO_API AVoxelTerrainActor(AVoxelTerrainActor&&); \
@@ -148,31 +128,31 @@ DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(AVoxelTerrainActor); \
 	DEFINE_DEFAULT_CONSTRUCTOR_CALL(AVoxelTerrainActor)
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_PRIVATE_PROPERTY_OFFSET
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_45_PROLOG \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_EVENT_PARMS
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_PRIVATE_PROPERTY_OFFSET
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_PROLOG \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_EVENT_PARMS
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_GENERATED_BODY_LEGACY \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_GENERATED_BODY_LEGACY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_PRIVATE_PROPERTY_OFFSET \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_RPC_WRAPPERS \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_CALLBACK_WRAPPERS \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_INCLASS \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_STANDARD_CONSTRUCTORS \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_PRIVATE_PROPERTY_OFFSET \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_RPC_WRAPPERS \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_CALLBACK_WRAPPERS \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_INCLASS \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_STANDARD_CONSTRUCTORS \
 public: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_GENERATED_BODY \
+#define UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_PRIVATE_PROPERTY_OFFSET \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_RPC_WRAPPERS_NO_PURE_DECLS \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_CALLBACK_WRAPPERS \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_INCLASS_NO_PURE_DECLS \
-	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_48_ENHANCED_CONSTRUCTORS \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_PRIVATE_PROPERTY_OFFSET \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_RPC_WRAPPERS_NO_PURE_DECLS \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_CALLBACK_WRAPPERS \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_INCLASS_NO_PURE_DECLS \
+	UnrealPlugin_PCG_Plugins_InfiniteVoxelWorld_Source_InfiniteVoxelWorld_Public_VoxelTerrainActor_h_51_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 

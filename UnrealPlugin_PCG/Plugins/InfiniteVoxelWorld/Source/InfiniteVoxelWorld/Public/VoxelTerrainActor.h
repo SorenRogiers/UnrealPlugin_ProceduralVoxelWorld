@@ -24,12 +24,15 @@ struct FVoxelData
 UENUM(BlueprintType)
 enum class EVoxelType : uint8
 {
+	//Ground Voxels
 	VE_Air				UMETA(DisplayName = "Air"),
 	VE_Grass 			UMETA(DisplayName = "Grass"),
 	VE_Dirt 			UMETA(DisplayName = "Dirt"),
 	VE_Rock 			UMETA(DisplayName = "Rock"),
 	VE_Snow 			UMETA(DisplayName = "Snow"),
 	VE_Sand 			UMETA(DisplayName = "Sand"),
+	
+	//Foliage
 	VE_OakLog 			UMETA(DisplayName = "OakLog"),
 	VE_SpruceLog 		UMETA(DisplayName = "SpruceLog"),
 	VE_OakLeaves 		UMETA(DisplayName = "OakLeaves"),
@@ -74,7 +77,10 @@ private:
 
 public:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<UMaterialInterface *> MaterialsArray;
+	TArray<UMaterialInterface *> VoxelMaterials;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UMaterialInterface *> OtherMaterials;
 
 	UPROPERTY()
 	TArray<EVoxelType> VoxelIDs;
@@ -110,9 +116,6 @@ public:
 	int32 VoxelElementsPowered2;
 
 	UPROPERTY()
-	int32 VoxelExtensionPowered2;
-
-	UPROPERTY()
 	UProceduralMeshComponent* ProceduralMeshComponent = nullptr;
 
 	//FOLIAGE PERCENTAGES
@@ -143,9 +146,6 @@ public:
 	//**************
 	UFUNCTION(BlueprintCallable, Category = "Voxel")
 	void UpdateCollision(bool isInColissionRange);
-
-	UFUNCTION(BlueprintCallable, Category = "Voxel")
-	void UpdateVoxel(FVector localPosition, int32 value);
 
 	UFUNCTION(BlueprintCallable, Category = "Voxel")
 	void DrawFoliage();
